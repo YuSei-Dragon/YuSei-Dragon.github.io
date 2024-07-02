@@ -781,7 +781,7 @@ const getInputText = ((e)=>{
     }if(DefenseName == "同花顺"){
       DefenseNun = 5
     }
-    if(DefenseNun>caozuoIndex){
+    if(DefenseNun>caozuoIndex.value){
       //如果操作的数能进行防御，则进行处理
       myCards.value = loseCards(mesList,myCards.value)
       //去掉防御使用的卡牌
