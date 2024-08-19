@@ -1,19 +1,22 @@
 <template>
   <div class="block">
     <!-- <HelloWorld/> -->
-    <PokeTest/>
+    <!-- <PokeTest/> -->
+    <MonsterTest/>
   </div>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld.vue'
-import PokeTest from './components/PokeTest.vue'
+// import PokeTest from './components/PokeTest.vue'
+import MonsterTest from "./components/MonsterTest.vue"
 
 export default {
   name: 'App',
   components: {
     // HelloWorld,
-    PokeTest,
+    // PokeTest,
+    MonsterTest,
   }
 }
 </script>

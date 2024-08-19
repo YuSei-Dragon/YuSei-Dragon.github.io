@@ -1,8 +1,16 @@
 <script setup>
-import { ref } from 'vue'
 import {
+  computed,
+  ref,
   onMounted,
+  defineAsyncComponent,
+  nextTick,
 } from 'vue'
+import {useStore} from 'vuex'
+const store = useStore()
+const usingList = computed(()=>store.state.usingList)
+
+
 //名称和示范        伤害    补牌   压制回牌   回血
 //一对 11            2      1        0       0
 //三条 111           3      2        0       3
@@ -27,6 +35,11 @@ import {
 //   {num:6,type:'hongtao'},
 //   {num:6,type:'heitao'},
 // ]
+
+const AsyncComponent = defineAsyncComponent(() =>
+  import("./PokeTestView.vue")
+)
+
 const cards = ref([])
 const types = ref(["hongtao","heitao","meihua","fangkuai"])
 const index = ref(0)
@@ -51,12 +64,19 @@ const fightNum = ref(0)
 const myFightNum = ref(0)
 const uFightNum = ref(0)
 
+const sonRef = ref()
+const sonUsingList = ref([])
+
 onMounted(() => {
   init()
+  // firstTurn()
+  //如果不注释的话可以直接进行文字版游玩，但是交互版要打断流程给思考时间
 })
 const init = (()=>{
   //设置基本牌库
   let a = 0
+  cards.value = []
+  //清空牌堆
   for(let w = 0;w<4;w++){
     for(let q= 1;q<=13;q++){
     cards.value.push({
@@ -73,34 +93,53 @@ const init = (()=>{
   //洗牌
   myCards.value = getInitCards(cards,index)
   uCards.value = getInitCards(cards,index)
+  myCards.value = sortCards(myCards.value)
+  uCards.value = sortCards(uCards.value)
+  initSetting()
+})
+const initSetting = (()=>{
   //设置电脑难度
-  uEveryGetNum.value = 4
+  uEveryGetNum.value = 3
   //敌方每回合抽卡
   //我方选择技能
   //英姿 
   myEveryGetNum.value = 3
   //制衡(一回合一次)
   myCanReflsh.value = true
-
   fightNum.value++
+})
+const whoFirst = (()=>{
   if(Math.random()>0.5){
+    firStep.value = "me"
+  }else{
+    firStep.value = "u"
+  }
+})
+const mefirstTurn = (()=>{
+
     iGetCards(myEveryGetNum.value)
     firStep.value = "me"
     console.log("获得先攻")
     console.log("你摸了"+myEveryGetNum.value+"张卡")
     myCards.value = sortCards(myCards.value)
-  }else{
-    firStep.value = "u"
-    console.log("电脑先攻")
+    //我先手，对牌组进行处理
+  //   firStep.value = "u"
+  //   console.log("电脑先攻")
+  //   // uGetCards(uEveryGetNum.value)
+  //   // uTrun()
+  // }
+  // console.log("电脑剩余生命值："+uCost.value)
+  // console.log("我方剩余生命值："+myCost.value)
+  // console.log("我方手牌为: ")
+  // // showCards(myCards.value)
+  // // // console.log(myCards.value,uCards.value)
+  // // startGame()
+})
+const ufirstTurn = (()=>{
+    // console.log("电脑先攻")
     uGetCards(uEveryGetNum.value)
-    uTrun()
-  }
-  console.log("电脑剩余生命值："+uCost.value)
-  console.log("我方剩余生命值："+myCost.value)
-  console.log("我方手牌为: ")
-  showCards(myCards.value)
-  // console.log(myCards.value,uCards.value)
-  startGame()
+    uCards.value = sortCards(uCards.value)
+    // uTrun()
 })
 const startGame = (()=>{
   if(firStep.value=="me"){
@@ -1076,8 +1115,79 @@ const Defense = ((caozuo,list)=>{
     return false
   }
 })
+
+const sortMyCards=(()=>{
+  myCards.value = sortCards(myCards.value)
+  console.log(myCards.value)
+})
+const sortBotCards=(()=>{
+  uCards.value = sortCards(uCards.value)
+  console.log(uCards.value)
+})
+const checkUsingList=(()=>{
+  const result =  checkAll(usingList.value)
+  console.log(result)
+  if(result!="no"){
+    console.log(myCards.value,usingList.value)
+    myCards.value = loseCards(usingList.value,myCards.value)
+    //从手牌中去掉选取的卡
+    console.log(myCards.value)
+    store.commit('setMyList',myCards.value)
+    //剩余手牌
+    const cost = countCost(result)
+    uCost.value-= cost
+    store.commit("setBotLive",uCost.value)
+    console.log(uCost.value)
+  }
+})
+const checkMyAllCards=(()=>{
+  //检查还有没有出牌可能性
+  const result = checkAll(myCards.value)
+  if(result == 'no'){
+    store.commit("IshouldEnd",true)
+  }
+})
+
+const checkBotAllCards=(()=>{
+  //检查还有没有出牌可能性
+  const result = checkAll(uCards.value)
+  if(result == 'no'){
+    store.commit("BotshouldEnd",true)
+  }
+})
+
+const botTurn=(()=>{
+  let result = checkAll(uCards.value)
+  //跑一遍刷新doList
+  //已经经过过滤，这里是必有可操作的
+  let mesList = []
+    doList.value.forEach(item=>{
+      uCards.value.forEach(item1=>{
+        if(item1.type==item.type&&item1.num==item.num){
+          mesList.push(item1)
+        }
+      })
+    })
+    result = logic(mesList)
+    console.log("电脑使用了: "+ result)
+    uCards.value = loseCards(mesList,uCards.value)
+    //刷新剩余电脑手牌
+    store.commit("changeBotUsingList",mesList)
+    //传出使用的组合
+    
+    myCost.value-=countCost(result)
+    store.commit('setMyLive',myCost.value)
+    //修改我方生命值
+
+})
+
+
 </script>
 
 <template>
-<input type="text" name="" id="" v-model="inputText" @keyup.enter="getInputText" :disabled="disabled">
+<div>
+  <AsyncComponent ref="sonRef" :botLiveNumNow_="uCost" :myLiveNumNow_="myCost"  :myCardsList_="myCards" :uCardsList_="uCards" @megetFirst="mefirstTurn" @botgetFirst="ufirstTurn"  @init="init" @checkAll="checkAll" @sortMyCards="sortMyCards" @sortBotCards="sortBotCards" @checkUsingList="checkUsingList" @checkMyAllCards="checkMyAllCards" @checkBotAllCards="checkBotAllCards" @botTurn="botTurn" />
+  <input type="text" name="" id="" v-model="inputText" @keyup.enter="getInputText" :disabled="disabled" >
+</div>
+
 </template>
