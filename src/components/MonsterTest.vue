@@ -28,6 +28,24 @@
 //12start monster attack design 8 ,because 3*8 = 24 3truns to lose
 //we can use 'kill' whithout num limit,because it is so cool to otk after many turns to prepare
 //monster attack should spend one 'kill' ,but u can just u 'kill' to attack
+// i think kill and monster kill should also could be use defense to miss it , but is so hard to change the code
+//we should focus on 'monster' but not card .that is important
+//mabey 5 monsters is reasonable ,isn't it?
+//if one guys 5 monster all die ,he lost. and i think we can gave some abilty for monster
+//when they ender the game in diff time
+//i have a good idea , in diff area ,use diff card desk! so u can not just one monster play
+//i want to express a thinking that , all though ur monster is not strong enough
+//ur can bring them fight together to help them become the best of themselve but not any other
+// most of the cards should could use in most time
+// i think evolve ur monster is cool , we should focus on it 
+// *test think : move card u can use one to order ur monster fight/use ability/or evolve
+//              monster have grade ,highter grade will unlock more ability 
+//              one monster can not choice 4 ability in one game/it's anyone mode
+//              i dont want to make it too complicated , i think begin with 5 attribute is good , we can add more later
+//              less is more , fun is most important
+//              jin -> mu -> shui -> huo -> tu  wuxing attributes
+
+
 import {
   nextTick,
   ref,
@@ -237,16 +255,16 @@ const reStartGame = (()=>{
   resetAll()
   nextTick(()=>{
     setTimeout(()=>{
-      myHandCardList.value = getCardFormList(myHandCardList.value,6)
-      botHandCardList.value = getCardFormList(botHandCardList.value,6)
+      // myHandCardList.value = getCardFormList(myHandCardList.value,6)
+      // botHandCardList.value = getCardFormList(botHandCardList.value,6)
       // botHandCardList.value.push({cardType:"basic",num:3,name:"决斗",type:'active',desc:"从对方开始轮流出 急袭卡，直到一方无法再出，则收到这次决斗累计的杀数量的伤害+1"},) 
       // myHandCardList.value.push({cardType:"basic",num:3,name:"决斗",type:'active',desc:"从对方开始轮流出 急袭卡，直到一方无法再出，则收到这次决斗累计的杀数量的伤害+1"},) 
       // myHandCardList.value.push({cardType:"basic",num:1,name:"急袭",type:'active',desc:"对敌方造成两点伤害"},) 
       // myHandCardList.value.push({cardType:"basic",num:1,name:"急袭",type:'active',desc:"对敌方造成两点伤害"},) 
-      // botHandCardList.value.push({cardType:"basic",num:1,name:"急袭",type:'active',desc:"对敌方造成两点伤害"},) 
+      botHandCardList.value.push({cardType:'spade',num:13,name:'禁忌仪式',type:'active',desc:'进行一次判定，然后翻开牌堆顶三张卡加入手卡，每出现一张不同花色失去一点生命值'},) 
       // botHandCardList.value.push({cardType:"basic",num:1,name:"急袭",type:'active',desc:"对敌方造成两点伤害"},) 
       // botHandCardList.value.push({cardType:"basic",num:1,name:"急袭",type:'active',desc:"对敌方造成两点伤害"},)
-      // myHandCardList.value.push({cardType:"basic",num:2,name:"格挡",type:'counterattack',desc:"无效对方一张急袭，或者一次怪兽攻击"})
+      myHandCardList.value.push({cardType:"basic",num:2,name:"格挡",type:'counterattack',desc:"无效对方一张急袭，或者一次怪兽攻击"})
       // botHandCardList.value = []
       // myHandCardList.value.push({cardType:'diamond',num:2,name:'护心镜1',type:'equip',desc:'装备的怪兽即将被破坏时，破坏此卡并免疫这次破坏'})
       // myHandCardList.value.push({cardType:'spade',num:2,name:'护心镜2',type:'equip',desc:'装备的怪兽即将被破坏时，破坏此卡并免疫这次破坏'})
@@ -398,9 +416,12 @@ const botFight = ()=>{
       killNum++
     }
   })
-  if(monsterCallNum.value==1||killNum<=0){
+  if(monsterCallNum.value==1){
     mesList.value.push("第一回合不能攻击，自动结束战斗阶段")
     showDialogMes("首回合不能攻击，结束战斗阶段",1500,()=>{botEndTurn()})
+  }else if(killNum<=0){
+    mesList.value.push("没有急袭卡可使用，自动结束战斗阶段")
+    showDialogMes("没有急袭卡可使用，自动结束战斗阶段",1500,()=>{botEndTurn()})
   }else{
     botMonsterList.value = botMonsterList.value.map((item,index)=>{
       item.index = index
@@ -728,6 +749,10 @@ const useActive = (card,usedManList)=>{
     showDialogCardList.value = true
     dialogWidth.value = 200
     dialogLeft.value = 200
+  }else if(card.name == "禁忌仪式"){
+    tabooRite("bot")
+  }else if(card.name == "生生不息"){
+    springCame("bot")
   }else{
     delectCardActive(activeCard.value,botCardList.value)
     //清除卡片（仅用于卡片效果梅全部完成）
@@ -973,6 +998,18 @@ const myActiveCard = ()=>{
     botCheckDuel()
     myHandCardList.value = cleanCard(myHandCardList.value,usingCard.value)
     //清除卡片 决斗
+  }else if(usingCard.value.name == "禁忌仪式"){
+    console.log("我方发动禁忌仪式")
+    //重置决斗基础伤害
+    tabooRite("me")
+    myHandCardList.value = cleanCard(myHandCardList.value,usingCard.value)
+    //清除卡片 禁忌仪式
+  }else if(usingCard.value.name == "生生不息"){
+    console.log("我方发动生生不息")
+    //重置决斗基础伤害
+    tabooRite("me")
+    myHandCardList.value = cleanCard(myHandCardList.value,usingCard.value)
+    //清除卡片 生生不息
   }else{
     myHandCardList.value = cleanCard(myHandCardList.value,usingCard.value)
     //清除卡片（仅用于卡片效果梅全部完成）
@@ -1815,6 +1852,46 @@ const choiceMoreMonster = ()=>{
     monstersList.value = []
     showDialogCardList.value = false
   }
+}
+const tabooRite = (who)=>{
+  let list = []
+  list = getCardFormList(list,4)
+  console.log(list)
+  showDialogMes("判定的结果为"+list[0].cardType,1500,()=>{
+    if(who=="bot"){
+      mesList.value.push("对方发动了禁忌仪式,从牌堆中获得三张牌")
+      list.forEach((item,index)=>{
+        if(index>0&&item.cardType!=list[0].cardType){
+          botLifeNum.value -=2
+          botHandCardList.value.push(item)
+          mesList.value.push("对方失去两点生命值")
+        }
+      })
+      delectCardActive(activeCard.value,botCardList.value)
+      botUseCard()
+    //继续对方出牌
+    }else{
+      mesList.value.push("我方发动了禁忌仪式,从牌堆中获得三张牌")
+      list.forEach((item,index)=>{
+        if(index>0&&item.cardType==list[0].cardType){
+          myLifeNum.value -=2
+          myHandCardList.value.push(item)
+          mesList.value.push("我方失去两点生命值")
+        }//我方发动直接在手牌结算
+      })
+    }
+    recycleList.value.push(list[0])
+    //判定牌加入弃牌堆
+  })
+}
+const springCame = (who)=>{
+  if(who=="bot"){
+    botLifeNum.value +=botHandCardList.value.length
+    delectCardActive(activeCard.value,botCardList.value)
+  }else{
+    myLifeNum.value +=myHandCardList.value.length
+  }//我方发动直接在手牌结算
+
 }
 
 //it is obviously that attack card less than defend/heal card
