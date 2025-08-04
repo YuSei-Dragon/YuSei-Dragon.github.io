@@ -43,5 +43,16 @@ export default {
         if(name == "呆猫王中王"){
             return "泥薅，沃是尼的对手，给你点颜色瞧瞧喵！"
         }
+    },
+    getChoiceMes(card){
+        //返回选择的类型   玩家/卡片
+        if(card.name == "杀"||card.name == "决斗"||card.name == "顺手牵羊"||card.name == "过河拆桥"){
+            return "player"
+        }else{
+            return "card"
+        }
+    },
+    getChoiceList(card){
+        //返回选择的数组
     }
 }

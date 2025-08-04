@@ -10,6 +10,7 @@ const $store = createStore({
         myLiveNumNow:20,
         IisEnd:true,
         BotisEnd:true,
+        bullFightTip:"",
     },
     getters: {},
     //mutations可以看作是调用state的事件，在组件中可以通过commit方法调用和响应
@@ -38,6 +39,9 @@ const $store = createStore({
         },
         setMyList(state,list){
             state.myList = list
+        },
+        setBullFightTip(state,tip){
+            state.bullFightTip = tip
         }
     },
     actions: {},

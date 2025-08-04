@@ -24,8 +24,8 @@ const mainList = [
     {name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},{name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},
     {name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},{name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},
     {name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},{name:"闪",text:"可以用来响应 杀 或者 万箭齐发 "},
-    {name:"桃",text:"回复自己场上怪兽生命值数量 的生命值"},{name:"桃",text:"回复自己场上怪兽生命值数量 的生命值"},
-    {name:"桃",text:"回复自己场上怪兽生命值数量 的生命值"},{name:"桃",text:"回复自己场上怪兽生命值数量 的生命值"},
+    {name:"桃",text:"回复自己场上怪兽生命值数量+100 的生命值"},{name:"桃",text:"回复自己场上怪兽生命值数量+100 的生命值"},
+    {name:"桃",text:"回复自己场上怪兽生命值数量+100 的生命值"},{name:"桃",text:"回复自己场上怪兽生命值数量+100 的生命值"},
     {name:"决斗",text:"双方一直轮流出 杀 ，不然受到出的 杀数量*100 的伤害"},
     {name:"决斗",text:"双方一直轮流出 杀 ，不然受到出的 杀数量*100 的伤害"},
     {name:"南蛮入侵",text:"除了发起者，全场玩家都要受到150伤害，可以出一张 杀 抵消"},
@@ -47,6 +47,19 @@ const mainList = [
     {name:"五谷丰登",text:"从卡堆翻开场上玩家数量 数量的卡，从发动者 顺时针轮流一人选一张加入手卡"},
     {name:"五谷丰登",text:"从卡堆翻开场上玩家数量 数量的卡，从发动者 顺时针轮流一人选一张加入手卡"},
 ]
+const cardPriorityList = [
+    {name:"顺手牵羊",priority: 1},
+    {name:"过河拆桥",priority:2},
+    {name:"南蛮入侵",priority:3},
+    {name:"万箭齐发",priority:4},
+    {name:"决斗",priority:5},
+    {name:"酒",priority:6},
+    {name:"杀",priority:7},
+    {name:"五谷丰登",priority:8},
+    {name:"桃园结义",priority:9},
+    {name:"桃",priority:10},
+]
+//bot使用卡牌的优先级
 export default {
     getSomething(sb){
         return sb
@@ -139,5 +152,25 @@ export default {
                 }
               }
         }
-    }
+    },
+    botUserCardMethod(list,allMes){
+        let isUsedDrink = allMes.isUsedDrink
+        //是否用过酒了，一回合只能用一次
+        let index = 0
+        for(let i = 0;i<list.length;i++){
+            cardPriorityList.forEach(item=>{
+                if(item.name == list[i].name){
+                    if(item.name == "酒"&&isUsedDrink){
+                        //无事发生，酒不能重复喝
+                    }else{
+                        if(i>index){
+                            index = i
+                        }  
+                    }
+                }
+            })
+        }
+
+        return index
+    },
 }

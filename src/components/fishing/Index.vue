@@ -137,6 +137,7 @@ const setAccountMes = (text)=>{
 }
 </script>
 <template lang="pug">
+  .all-back
     .background(@mouseover="handleMouseOver" @mouseout="handleMouseOut" :style="getBackgroundStyle()")
       .bg
         .buttons-block(v-if="page=='index'")
@@ -163,13 +164,20 @@ const setAccountMes = (text)=>{
         
 </template>
 <style scoped lang="scss">
+.all-back{
+  width: 100%;
+  height: 930px;
+  padding-top: 530px;
+}
 .background{
   width:500px;
   height: 400px;
+  // height: 930px;
   border: 1px #eee solid;
   background: #d7d6e3;
   position:relative;
   overflow: hidden;
+  // padding-top: 530px;
   .bg{
     height: 100%;
     width: 100%;

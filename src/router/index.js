@@ -5,7 +5,7 @@ const routes = [
     {
         path: '/fish',
         name: 'Home',
-        component: () => import('@/components/fishing/index'),
+        component: () => import('@/components/fishing/Index'),
         // about是子级
         children: [
             // {
@@ -19,6 +19,22 @@ const routes = [
     {
         path: '/desk',
         component: () => import('@/components/desk')
+    },
+    {
+        path: '/testBlock',
+        component: () => import('@/components/testBlock')
+    },
+    {
+        path: "/without",
+        component: () => import('@/components/withoutStop/index')
+    },
+    {
+        path: "/city",
+        component: () => import('@/components/city/index')
+    },
+    {
+        path: "/bullfight",
+        component: () => import('@/components/bullfight/index')
     }
 ]
  

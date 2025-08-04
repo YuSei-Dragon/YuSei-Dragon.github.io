@@ -15,14 +15,14 @@
 // import Monster2 from './components/Monster2.vue'
 // import Monster2View from './components/Monster2View.vue'
 // import dodgeTheCrush from './components/dodgeTheCrush.vue'
-import fishing from './components/fishing/Index.vue'
+// import fishing from './components/fishing/Index.vue'
 import router from './router'
 export default {
   name: 'App',
   components: {
     // HelloWorld,
     // PokeTest,
-    fishing
+    // fishing
     // dodgeTheCrush，
   },
   methods:{

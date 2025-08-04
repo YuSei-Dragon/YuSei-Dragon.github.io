@@ -9,11 +9,11 @@ import {
   defineEmits,
   defineProps,
 } from 'vue'
-import jin from "./img/jin.png"
-import mu from "./img/mu.png"
-import shui from "./img/shui.png"
-import huo from "./img/huo.png"
-import tu from "./img/tu.png"
+import jin from "../img/jin.png"
+import mu from "../img/mu.png"
+import shui from "../img/shui.png"
+import huo from "../img/huo.png"
+import tu from "../img/tu.png"
 // #bfbfbf
 const emit = defineEmits([ "doSth" ])
 const props = defineProps({
@@ -26,11 +26,17 @@ const props = defineProps({
         default:0,
     },
 })
+watch(props,(newValue,oldValue)=>{
+    console.log("你的手卡/血条数量发生了变化！")
+    cardsList.value = newValue.myCardsList
+    
+})
 const cardsList = ref([])
 const mouseenterIndex = ref(-1)
 onMounted(() => {
   init()
 })
+
 const init = ()=>{
     cardsList.value = props.myCardsList
 }
@@ -127,6 +133,9 @@ const mouseLeaveButtons = ()=>{
 }
 const endTurn = ()=>{
   emit("enMyTurn")
+}
+const restart = ()=>{
+  emit("restart")
 }
 </script>
 <template lang="pug">
