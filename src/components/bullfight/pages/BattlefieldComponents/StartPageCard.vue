@@ -105,6 +105,9 @@ const backToSkill = ()=>{
 const clearSelectCard = ()=>{
     choicedCardList.value = []
 }
+const buyStrategy = ()=>{
+    emit("buyStrategy")
+}
 defineExpose({
     choiceCard,
     backToSkill,
@@ -126,6 +129,7 @@ defineExpose({
         .card-strategy-block.card-block(v-show="choiced==='strategy'" )
             .card-strategy-one(v-for="strategy in props.strategyList" :style="'width:'+315/props.strategyList.length + 'px;'" @mouseenter="onFocus(strategy,'strategy')")
                 .card-strategy-name {{strategy.name}}
+            .card-strategy-one.card-strategy-add(@click="buyStrategy()" ) +
     .choice-position
         .choice-one(:class="choiced==='skill'?'choice':''" @click="choiced='skill'") 技能
         .choice-one(:class="choiced==='hand'?'choice':''" @click="choiced='hand'") 手牌
@@ -209,6 +213,14 @@ defineExpose({
             }
             .card-strategy-one:hover{
                 background-color: #eee;
+            }
+            .card-strategy-add{
+                width:100%;
+                line-height: 70px;
+                border-radius:4px;
+                border:1px dashed #ddd;
+                text-align:center;
+                font-size: 20px;
             }
         }
     }

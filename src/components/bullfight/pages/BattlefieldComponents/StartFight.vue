@@ -92,6 +92,20 @@ const showMyHit = ()=>{
         isShowMyHit.value = false
     })
 }
+const isShowMyMiss = ref(false)
+const showMyMiss = ()=>{
+    isShowMyMiss.value = true
+    apiTrun.waitToDo(600,()=>{
+        isShowMyMiss.value = false
+    })
+}
+const isShowBotMiss = ref(false)
+const showBotMiss = ()=>{
+    isShowBotMiss.value = true
+    apiTrun.waitToDo(600,()=>{
+        isShowBotMiss.value = false
+    })
+}
 defineExpose({
     showDetailSkill,
     changeSkill,
@@ -102,6 +116,8 @@ defineExpose({
     standByNum,
     showBotHit,
     showMyHit,
+    showMyMiss,
+    showBotMiss,
 })
 </script>
 <template lang="pug">
@@ -116,11 +132,12 @@ defineExpose({
             .fight-hit-animation1
             .fight-hit-animation2
             .fight-hit-animation3
-    .fight-miss miss~
+    .fight-miss(v-if="isShowMyMiss" style="top:115px;") miss~
     .fight-img-bot 
         img(class="fight-img" src="../../img/standbygif.gif" v-if="botStatus==='standBy'")
         img(class="fight-img" src="../../img/atk.gif" v-if="botStatus==='attack'")
         img(class="fight-img" src="../../img/haqi.gif" v-if="botStatus==='haqi'")
+    .fight-miss(v-if="isShowBotMiss") miss~
     .fight-img-my 
         img(class="fight-img" src="../../img/standbygif.gif" v-if="myStatus==='standBy'")
         img(class="fight-img" src="../../img/atk.gif" v-if="myStatus==='attack'")
@@ -182,10 +199,13 @@ background-color: #eee; /* 滑块的背景色 */
     position: relative;
     .fight-miss{
         position: absolute;
-        top: 0px;
-        left: 210px;
+        top: 20px;
+        left: 245px;
         color: #fff;
-        font-size: 14px;
+        font-size: 16px;
+        z-index:10;
+        transition:0.3s;
+        -webkit-text-stroke: 1px #ffffff;
     }
     .fight-img{
         width: 100%;

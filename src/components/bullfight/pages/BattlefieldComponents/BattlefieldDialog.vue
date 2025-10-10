@@ -61,6 +61,7 @@ const choiceOneCard = (hand)=>{
     }else{
         choicedCardList.value.push(hand)
     }
+
     reflashPokeNum()
 }
 const cardIncludes = (list,hand)=>{
@@ -91,7 +92,10 @@ const pokeNum = ref(0)
 const getStrategyStyle = (data)=>{
     if(strategyApi.checkStrategy(choicedCardList.value,data.condition)){
         return "background: #d8f0ff;color: #666;"
-    }return ""
+    }else{
+        return ""
+    }
+    
 }//检查卡牌的排列组合生效了几个
 const sure = ()=>{
     console.log("确认方法")
@@ -103,19 +107,29 @@ const sure = ()=>{
         console.log("点数不足")
         // return 
         store.commit("setBullFightTip","点数不足！")
-        console.log(store.state.bullFightTip)
+        // console.log(store.state.bullFightTip)
+        return 
     }
-    let strategyList = []
-    props.skillObj.strategyList.forEach(item=>{
-        if(strategyApi.checkStrategy(choicedCardList.value,item.condition)){
-            strategyList.push(item)
-        }
-    })
+    // let strategyList = []
+    // props.skillObj.strategyList.forEach(item=>{
+    //     if(strategyApi.checkStrategy(choicedCardList.value,item.condition)){
+    //         strategyList.push(item)
+    //     }
+    // })
     emit("sure",{
         skill:skillMes.value.name,
         cardList:choicedCardList.value,
-        strategyList:strategyList,
+        strategyList:choiceStrategyList.value,
     })
+}
+const choiceStrategyList = ref([])
+const choiceStrategy = (strategy)=>{
+    // console.log(strategy)
+    if(choiceStrategyList.value.includes(strategy.name)){
+        choiceStrategyList.value = choiceStrategyList.value.filter(item=>item!==strategy.name)
+    }else if(strategyApi.checkStrategy(choicedCardList.value,strategy.condition)){
+        choiceStrategyList.value.push(strategy.name)
+    }
 }
 </script>
 <template lang="pug">
@@ -134,7 +148,8 @@ const sure = ()=>{
             .dialog-one-strategy(style="height:70px;") 策略卡能力：{{strategyDec}}
             .dialog-one-num 当前点数: {{pokeNum}}
             .dialog-one-strategy
-                .dialog-one-strategy-for(v-for="strategy in skillObj.strategyList" @mouseenter="onFocus(strategy)" :getStrategyStyle="getStrategyStyle(strategy)")
+                .dialog-one-strategy-for(v-for="strategy in skillObj.strategyList" @mouseenter="onFocus(strategy)" :style="getStrategyStyle(strategy)" @click="choiceStrategy(strategy)")
+                    .dialog-one-check(v-show="choiceStrategyList.includes(strategy.name)") 选中
                     .dialog-one-name {{strategy.name}}
                     img(class="dialog-one-attribute" :src="monsterShowApi.attributeJudge(strategy)")
                     .dialog-one-condition {{strategy.condition}}
@@ -223,7 +238,7 @@ background-color: #eee; /* 滑块的背景色 */
             overflow: auto;
             .dialog-one-poke{
                 height: 45px;
-                width: 40px;
+                width: 38px;
                 float: left;
                 color: #999;
                 font-size: 12px;
@@ -265,6 +280,13 @@ background-color: #eee; /* 滑块的背景色 */
                     box-sizing: border-box;
                     padding: 4px 0px;
                     cursor: pointer;
+                    .dialog-one-check{
+                        position: absolute;
+                        bottom: 2px;
+                        right: 4px;
+                        font-size: 10px;
+                        color: #999;
+                    }
                     .dialog-one-attribute{
                         width: 20px;
                         height: 20px;

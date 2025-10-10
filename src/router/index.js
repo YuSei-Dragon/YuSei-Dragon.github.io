@@ -34,7 +34,11 @@ const routes = [
     },
     {
         path: "/bullfight",
-        component: () => import('@/components/bullfight/index')
+        component: () => import('@/components/bullfight/pages/Home'),
+    },
+    {
+        path: "/hajimi",
+        component: () => import('@/components/hajimi/pages/Home'),
     }
 ]
  

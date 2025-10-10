@@ -1,7 +1,8 @@
 import challengeApi from "./challengeMonsters"
 import strategyCardApi from "./strategyCard"
 export default {
-    sumbit(allMesBot,allMesMy,turnNum,skill,cardList,mesList){
+    sumbit(allMesBot,allMesMy,turnNum,skill,cardList,mesList,strategyList){
+        // strategyList 本回合使用的策略卡
         // allMesBot bot的所有信息
         // allMesMy my的所有信息
         // turnNum 回合数
@@ -17,7 +18,7 @@ export default {
         // if(skill.cost>allPoint){
         //     throw "点数不足！"
         // }
-        console.log("开始处理这个回合的技能")
+        console.log("开始处理这个回合的技能",allMesBot,allMesMy)
         turnNum ++//回合数加一
         let myMove = {}
         let botMove = {}
@@ -27,7 +28,7 @@ export default {
             if(allMesMy.speed>allMesBot.speed){
                 let myMes
                 try{
-                    myMes = this.myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList)
+                    myMes = this.myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList,strategyList)
                 }catch(e){
                     console.log("处理我的回合行动出错:",e)
                 }
@@ -110,7 +111,7 @@ export default {
                 }
                 let myMes
                 try{
-                    myMes = this.myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList)
+                    myMes = this.myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList,strategyList)
                 }catch(e){
                     console.log("处理我的回合行动出错:",e)
                 }
@@ -171,7 +172,21 @@ export default {
         let res = Number((damage/100)*(allMesAtk.atk/allMesDef.def)) * 20
         if(this.isRepressions(allMesAtk,allMesDef)){
             res = 1.5*res
+        }else if(this.isRepressions(allMesDef,allMesAtk)){
+            res = 0.75*res
         }
+        if(allMesDef?.atkPercentage10&&allMesDef.atkPercentage10>0){
+            res = 1.1 * res
+        }//易损baff
+        if(allMesAtk?.atkPercentage10&&allMesAtk.atkPercentage10>0){
+            res = res + 0.1 * Number(allMesDef.lifeNow)
+        }//攻击时额外造成10%当前生命值伤害
+        if(allMesAtk?.atkDouble&&allMesAtk.atkDouble>0){
+            res = 2 * res
+        }//本回合攻击伤害翻倍
+        if(allMesAtk?.absorb&&allMesAtk.absorb>0){
+            res = -res
+        }//本回合对方造成伤害变为增加我方生命值
         return Number(-res.toFixed(0))
     },//伤害计算公式
     damageSCount(damageS,allMesAtk,allMesDef){
@@ -179,7 +194,21 @@ export default {
         let res = Number((damageS/100)*(allMesAtk.atkMagic/allMesDef.defMagic)) * 20
         if(this.isRepressions(allMesAtk,allMesDef)){
             res = 1.5*res
+        }else if(this.isRepressions(allMesDef,allMesAtk)){
+            res = 0.75*res
         }
+        if(allMesDef?.atkPercentage10&&allMesDef.atkPercentage10>0){
+            res = 1.1 * res
+        }//易损baff
+        if(allMesAtk?.atkPercentage10&&allMesAtk.atkPercentage10>0){
+            res = res + 0.1 * Number(allMesDef.lifeNow)
+        }//攻击时额外造成10%当前生命值伤害
+        if(allMesAtk?.atkDouble&&allMesAtk.atkDouble>0){
+            res = 2 * res
+        }//本回合攻击伤害翻倍
+        if(allMesAtk?.absorb&&allMesAtk.absorb>0){
+            res = -res
+        }//本回合对方造成伤害变为增加我方生命值
         return Number(-res.toFixed(0))
     },//特殊伤害计算公式
     isRepressions(allMesAtk,allMesDef){
@@ -194,19 +223,33 @@ export default {
         return res
     },
     cureCount(cure,allMesMy){
+        let res = 0
         if(cure==="少量"){
-            return Number((10*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
+            res =  Number((10*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
         }else if(cure === "大量"){
-            return Number((20*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
+            res =  Number((20*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
         }else if(cure === "巨额"){
-            return Number((30*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
+            res = Number((30*allMesMy.life/(allMesMy.def+allMesMy.defMagic)).toFixed(0)) 
         }
-        throw "处理回血出错"
+        if(allMesMy?.healHard&&allMesMy.healHard>0){
+            res = res * 0.5
+        }//重伤baff
+        return res
+        // throw "处理回血出错"
     },//处理回血
-    myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList){
+    myTurn(allMesBot,allMesMy,turnNum,skill,cardList,mesList,strategyList){
+        // console.log("本回合我使用的手卡",cardList)
         mesList.push({text:allMesMy.name + "发动了" + skill.name,type:"default"})
+        //因为我方发动技能有一个独立页面，因此进入这里逻辑不存在点数不足的情况（已拦截）
+        let usedCard = this.myUseCard(allMesMy,allMesBot,strategyList,mesList)
+        allMesMy = usedCard.allMesMy
+        allMesBot = usedCard.allMesBot
+        mesList = usedCard.mesList
+
+        //处理策略卡
         if(skill.aim!=="self"){
             if(this.isMiss(allMesMy,allMesBot)){
+                // console.log(allMesMy,allMesBot)
                 mesList.push({
                     text:"我的技能落空了！",
                     type:"default"
@@ -222,7 +265,13 @@ export default {
                 }
             }
         }
-        //纯数值计算
+
+        //处理技能发动前的策略卡效果
+        let beforeRes = strategyCardApi.dealBeforeSkill(allMesBot,allMesMy)
+        allMesBot = beforeRes.allMesBot
+        allMesMy = beforeRes.allMesMy
+
+        //纯数值计算    
         if(skill?.mySpeed){
             let speed = allMesMy.speed
             allMesMy.speed+=skill.mySpeed
@@ -370,7 +419,13 @@ export default {
                 isNotEnough:true,
             }
         }
-        this.botUseCard(allMesBot,botSkill)
+        let useRes = this.botUseCard(allMesBot,allMesMy,botSkill,mesList)
+
+        allMesBot = useRes.allMesBot
+        allMesMy = useRes.allMesMy
+        mesList = useRes.mesList
+
+        //处理bot的手卡消耗
         mesList.push({text:allMesBot.name + "发动了" + botSkill.name,type:"default"})
         if(skill.aim!=="self"){
             if(this.isMiss(allMesBot,allMesMy)){
@@ -390,7 +445,11 @@ export default {
                 }
             }
         }
-        
+        //处理技能发动前的策略卡效果
+        let beforeRes = strategyCardApi.dealBeforeSkill(allMesBot,allMesMy)
+        allMesBot = beforeRes.allMesBot
+        allMesMy = beforeRes.allMesMy
+
         //纯数值计算
         if(botSkill?.mySpeed){
             let speed = allMesBot.speed
@@ -520,9 +579,10 @@ export default {
         
     },
     isMiss(atkMes,defMes){
-        if(atkMes.speed>defMes.speed){
+        if(atkMes.speed>defMes.speed||atkMes?.noMiss&&atkMes.noMiss>=0){
             return false
             //如果攻击者的速度大于防御者的速度，百分百命中
+            //如果有必中效果则无法闪避
         }else{
             let random = Math.random()
             //得到一个0~1的随机数
@@ -551,22 +611,72 @@ export default {
         },howLong)
         })
     },//同步化
-    botUseCard(allMesBot){
+    botUseCard(allMesBot,allMesMy,botSkill,mesList){
+
         //先确认使用技能
         //再确认有几个策略卡可以触发
         let canUseStrategyList = []
         allMesBot.strategyList.forEach(item=>{
             if(strategyCardApi.checkStrategy(allMesBot.cardList,item.condition)){
                 //检查所有的策略卡的触发条件是否满足
+                console.log("敌方策略卡"+item.name+"满足发动条件")
                 canUseStrategyList.push(item)
             }
         })
         console.log("可用策略卡",canUseStrategyList)
-        canUseStrategyList.forEach(strategy=>{
-            const strategyCards = strategyCardApi.getRequiredCardsForStrategy(allMesBot.cardList, strategy)
-
+        canUseStrategyList.forEach(card=>{
+           mesList.push({text:allMesBot.name+"的策略卡"+card.name + "已发动",type:"default"}) 
         })
-
+        let strategyList = []
+        canUseStrategyList.forEach(strategy=>{
+            console.log("得到"+strategy.name + "需要的卡")
+            const strategyCards = strategyCardApi.getRequiredCardsForStrategy(allMesBot.cardList, strategy)
+            strategyList.push(strategyCards)
+        })
+        console.log("敌方策略卡需要使用:",strategyList)
+        //得到策略卡需要的卡（优先发动尽可能多的策略卡）
+        let allStrategyNum = 0     
+        //计算使用策略卡能得到的点数
+        strategyList.forEach(item=>{
+            item.forEach(itemOne=>{
+                allStrategyNum += Number(itemOne.useNum*Number(itemOne.realNum))
+            })
+        })
+        console.log("通过使用策略卡使用的点数:",allStrategyNum,"需要点数：",botSkill.cost)
+        let delRes = strategyCardApi.delStratefy(allMesBot,allMesMy,strategyList)
+        allMesBot = delRes.allMesBot
+        allMesMy = delRes.allMesMy
+        //删去使用的卡，并处理策略卡标记
+        if(allStrategyNum>=botSkill.cost){
+            //所需点数已足够
+        }else{
+            let delNum = Number(botSkill.cost-allStrategyNum)
+            console.log("策略卡处理完毕后还需要点数：",delNum)
+            allMesBot = strategyCardApi.delByNum(allMesBot,delNum)
+        }
+        return {
+            allMesBot,
+            allMesMy,
+            mesList,
+        }
+    },
+    myUseCard(allMesMy,allMesBot,strategyList,mesList){
+        strategyList.forEach(item=>{
+            mesList.push({text:"我方使用了策略卡:"+item,type:"default"})
+            let res = strategyCardApi.getEffectByStrategyName(allMesMy,allMesBot,strategyCardApi.getStrategyByName(item))
+            allMesBot = res.allMesMy
+            allMesMy = res.allMesBot 
+        })
         
+        //使用的技能已确认
+        //再确认有几个策略卡可以触发
+
+        console.log("处理触发的策略卡",allMesMy)
+        return {
+            allMesMy,
+            allMesBot,
+            mesList
+        }
     }
+
 }

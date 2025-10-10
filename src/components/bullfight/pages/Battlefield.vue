@@ -24,6 +24,10 @@ const StartPage = defineAsyncComponent(()=>
 const Dialog = defineAsyncComponent(()=>
     import("./BattlefieldComponents/BattlefieldDialog.vue")
 )
+const DialogBuy = defineAsyncComponent(()=>
+    import("./BattlefieldComponents/BattlefieldDialogBuy.vue")
+)
+
 const props = defineProps({
     myMonsterList_:{
         type:Array,
@@ -173,19 +177,36 @@ const handleSure = (data)=>{
     startPage.value.useSkillDialog(data)
     isShowDialog.value = false
 }
+const handleSureBuy = (data)=>{
+    // console.log(data)
+    startPage.value.useSkillDialogBuy(data)
+    isShowBuy.value = false
+}
+const isShowBuy = ref(false)
+//是否打开购买策略卡面板
+const buyCardList = ref([])
+const buyStrategy = (data)=>{
+    isShowBuy.value = true
+    buyCardList.value = data
+}
+const closeDialogBuy = ()=>{
+    isShowBuy.value = false
+}
+
 </script>
 <template lang="pug">
 .battlefield-block
     .battlefield-tip( :style="isShowTip?'top:0px;':'top:-36px;'") {{showTipText}}
     .battlefield-dialog(v-if="isShowDialog")
         Dialog(:skillObj="skillObj" @closeDialog="closeDialog" @sure="handleSure")
+    .battlefield-dialog(v-if="isShowBuy")
+        DialogBuy( @closeDialogBuy="closeDialogBuy" :buyCardList="buyCardList" @sure="handleSureBuy")
     .battlefield-one(v-if="stageNoew==='before'")
         BeforePage(@decideMonster="handleEnemySure")
     .battlefield-one(v-if="stageNoew==='prepare'")
         SelectPage(:myMonsterList_="myMonsterList_" @makeSure="handleChildSure")
     .battlefield-one(v-if="stageNoew==='start'")
-        StartPage(ref="startPage" :mesList="mesList" @useSkill="useSkill" @substitution="substitution" @botSubstitution="botSubstitution" :myMonsterList_="myMonsterList_" :botMonsterList_="botMonsterList_" :monsterOnGroundBot="monsterOnGroundBot" :monsterOnGroundMy="monsterOnGroundMy")
-
+        StartPage(ref="startPage" :mesList="mesList" @buyStrategy="buyStrategy" @useSkill="useSkill" @substitution="substitution" @botSubstitution="botSubstitution" :myMonsterList_="myMonsterList_" :botMonsterList_="botMonsterList_" :monsterOnGroundBot="monsterOnGroundBot" :monsterOnGroundMy="monsterOnGroundMy")
 </template>
 <style scoped lang="scss">
 .battlefield-block{

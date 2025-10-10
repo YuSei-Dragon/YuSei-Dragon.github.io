@@ -157,13 +157,15 @@ const init = ()=>{
     // console.log(allMesBot.value,allMesMy.value
     pokeList.value = apiPoke.getPokeCardList()
     //初始化扑克
-    getPoke("my",10)
+    // getPoke("my",10)
     // getPoke("bot",10)
     allMesBot.value.cardList = apiPoke.getBotTest()
+    allMesMy.value.cardList = apiPoke.getMyTest()
     allMesMy.value.cardList.sort((a,b)=>Number(a.realNum)-Number(b.realNum))
     allMesBot.value.cardList.sort((a,b)=>Number(a.realNum)-Number(b.realNum))
-    getStrategy("my",1)
-    getStrategy("bot",1)
+    // getStrategy("my",1)
+    // getStrategy("bot",1)
+    allMesBot.value = strategyApi.testStrategyUseful(allMesBot.value)
     turnNum.value++
     //回合数+1
     console.log(allMesMy.value)
@@ -311,7 +313,7 @@ const onSumbit = ()=>{
             })
         }
         if(allMesMy.value.speed>allMesBot.value.speed){
-            let res = apiTrun.sumbit(allMesBot.value,allMesMy.value,turnNum.value,apiMes.getSkillDetailMes(myTurnMes.value.skill),myTurnMes.value.cardList,mesList.value)
+            let res = apiTrun.sumbit(allMesBot.value,allMesMy.value,turnNum.value,apiMes.getSkillDetailMes(myTurnMes.value.skill),myTurnMes.value.cardList,mesList.value,myTurnMes.value.strategyList)
             console.log("本回合处理结果：",res)
             myTurnMes.value.cardList.forEach(item=>{
                 pokeList.value.push(item)
@@ -341,13 +343,20 @@ const onSumbit = ()=>{
                         }
                         apiTrun.waitToDo(500,()=>{
                             res = showBotMove(res)
+                            let strategy = strategyApi.dealAfterSkill(allMesBot.value,allMesMy.value,pokeList.value,mesList.value)
+                            allMesBot.value = strategy.allMesBot
+                            allMesMy.value = strategy.allMesMy
+                            pokeList.value = strategy.pokeList
+                            mesList.value = strategy.mesList
+                            afterSubmit()
+
                         })
                     }
                     
                 })
             })
         }else{
-            let res = apiTrun.sumbit(allMesBot.value,allMesMy.value,turnNum.value,apiMes.getSkillDetailMes(myTurnMes.value.skill),myTurnMes.value.cardList,mesList.value)
+            let res = apiTrun.sumbit(allMesBot.value,allMesMy.value,turnNum.value,apiMes.getSkillDetailMes(myTurnMes.value.skill),myTurnMes.value.cardList,mesList.value,myTurnMes.value.strategyList)
             console.log("本回合处理结果：",res)
             myTurnMes.value.cardList.forEach(item=>{
                 pokeList.value.push(item)
@@ -377,19 +386,24 @@ const onSumbit = ()=>{
                         }
                         apiTrun.waitToDo(500,()=>{
                             res =  showMyMove(res)
+                            let strategy = strategyApi.dealAfterSkill(allMesBot.value,allMesMy.value,pokeList.value,mesList.value)
+                            allMesBot.value = strategy.allMesBot
+                            allMesMy.value = strategy.allMesMy
+                            pokeList.value = strategy.pokeList
+                            mesList.value = strategy.mesList
+                            afterSubmit()
+
                         })
                     }
                     
                 })
             })
         }
-        getPoke("my",2)
-        getPoke("bot",2)
-        if(turnNum.value%3===0){
-            //每三个回合摸一张策略卡
-            getStrategy("my",1)
-            getStrategy("bot",1)
-        }
+        // if(turnNum.value%3===0){
+        //     //每三个回合摸一张策略卡
+        //     getStrategy("my",1)
+        //     getStrategy("bot",1)
+        // }
     }catch(e){
         mesList.value.push({
             text:e,
@@ -397,19 +411,30 @@ const onSumbit = ()=>{
         })
         myTurnMes.value = {
             skill:"",
-            cardList:[]
+            cardList:[],
+            strategyList:[]
         }
         console.log("出现错误，回合处理失败")
 
     }finally{
-        myBlock.value.backToSkill()
-        allMesMy.value.lifeChangeBot = 0
-        allMesMy.value.lifeChangeMy = 0
-        allMesBot.value.lifeChangeBot = 0
-        allMesBot.value.lifeChangeMy = 0
-
-        clearSelectCard()
+        //
     }
+}
+const afterSubmit = ()=>{
+    getPoke("my",2)
+    getPoke("bot",2)
+    allMesMy.value.cardList.sort((a,b)=>Number(a.realNum)-Number(b.realNum))
+    allMesBot.value.cardList.sort((a,b)=>Number(a.realNum)-Number(b.realNum))
+    console.log("手卡排序完成")
+
+    //完成所有处理后，重新排序手卡
+    myBlock.value.backToSkill()
+    allMesMy.value.lifeChangeBot = 0
+    allMesMy.value.lifeChangeMy = 0
+    allMesBot.value.lifeChangeBot = 0
+    allMesBot.value.lifeChangeMy = 0
+
+    clearSelectCard()
 }
 const clearSelectCard = ()=>{
     myBlock.value.clearSelectCard()
@@ -421,6 +446,9 @@ const showMyMove = (res)=>{
         //     text:"我的技能落空了！",
         //     type:"default"
         // })
+        apiTrun.waitToDo(500,()=>{
+            fightPlace.value.showBotMiss()
+        })
     }else{
         if(res?.myMove&&res.myMove?.lifeChangeMy!==0){
             res.allMesMy.lifeNow += res.myMove.lifeChangeMy
@@ -457,6 +485,9 @@ const showBotMove = (res)=>{
         //     text:"对方技能落空了！",
         //     type:"default"
         // })
+        apiTrun.waitToDo(500,()=>{
+            fightPlace.value.showMyMiss()
+        })
     }else if(res.botMove.isNotEnough) {
         console.log("对方技能点数不足！")
     }else{
@@ -496,11 +527,25 @@ const useSkillDialog = (data)=>{
     myTurnMes.value.skill = data.skill
     myTurnMes.value.cardList = data.cardList
     myTurnMes.value.strategyList = data.strategyList
+
     onSumbit()
+}
+const buyStrategy = ()=>{
+    emit("buyStrategy",allMesMy.value.cardList)
+}//打开策略卡购买面板
+const useSkillDialogBuy = (data)=>{
+    console.log(data)
+    allMesMy.value.cardList = data.cardList
+    data.strategyCardList.forEach(item=>{
+        allMesMy.value.strategyList.push(strategyApi.getStrategyByName(item))
+        mesList.value.push({text:"我方购买了策略卡:"+item,type:"default"})
+    })
+
 }
 defineExpose({
 mesListAdd,
 useSkillDialog,
+useSkillDialogBuy,
 })
 </script>
 <template lang="pug">
@@ -542,7 +587,7 @@ useSkillDialog,
                 el-progress(style="position:relative;" :percentage="getLifeNow(allMesMy)" :text-inside="true" :stroke-width="16" :format="formatMy" color="#c5f6fa")
                     .progress-position() {{allMesMy.lifeNow}}
                 .head-cards    
-                    StartPageCard(ref="myBlock" :strategyList="allMesMy.strategyList" :skillList="allMesMy.skillList" :cardList="allMesMy.cardList" @onFocusSkill="onFocusSkill" @onFocusHand="onFocusHand" @onFocusStrategy="onFocusStrategy"  @onClickSkill="onClickSkill" @onClickHand="onClickHand" @onSumbit="onSumbit")
+                    StartPageCard(ref="myBlock" @buyStrategy="buyStrategy" :strategyList="allMesMy.strategyList" :skillList="allMesMy.skillList" :cardList="allMesMy.cardList" @onFocusSkill="onFocusSkill" @onFocusHand="onFocusHand" @onFocusStrategy="onFocusStrategy"  @onClickSkill="onClickSkill" @onClickHand="onClickHand" @onSumbit="onSumbit")
 </template>
 <style scoped lang="scss">
 .head-name-tooltip{

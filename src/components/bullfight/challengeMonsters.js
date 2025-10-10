@@ -67,6 +67,7 @@ export default {
             //     }
             // })
             // return skill
+            console.log("沙漠死神的技能发动逻辑检查",allMesBot,allMesMy)
 
             if(allMesBot.speed<allMesMy.speed&&this.canUseSkillByName(allMesBot,"枯萎")){
                 allMesBot.skillList.forEach(item=>{

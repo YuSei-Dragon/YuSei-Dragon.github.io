@@ -77,5 +77,103 @@ export default {
                 type:'spades',
             },
         ]
+    },
+    getMyTest(){
+        return [
+            {
+                num:'A',
+                realNum:'1',
+                type:'diamond',
+            },
+            {
+                num:'A',
+                realNum:'1',
+                type:'club',
+            },
+            {
+                num:'A',
+                realNum:'1',
+                type:'heart',
+            },
+            {
+                num:'A',
+                realNum:'1',
+                type:'spades',
+            },
+            {
+                num:'2',
+                realNum:'2',
+                type:'diamond',
+            },
+            {
+                num:'2',
+                realNum:'2',
+                type:'club',
+            },
+            {
+                num:'2',
+                realNum:'2',
+                type:'heart',
+            },
+            {
+                num:'2',
+                realNum:'2',
+                type:'spades',
+            },
+            {
+                num:'3',
+                realNum:'3',
+                type:'diamond',
+            },
+            {
+                num:'3',
+                realNum:'3',
+                type:'club',
+            },
+            {
+                num:'3',
+                realNum:'3',
+                type:'heart',
+            },
+            {
+                num:'3',
+                realNum:'3',
+                type:'spades',
+            },
+            {
+                num:'4',
+                realNum:'4',
+                type:'diamond',
+            },
+            {
+                num:'4',
+                realNum:'4',
+                type:'club',
+            },
+            {
+                num:'4',
+                realNum:'4',
+                type:'heart',
+            },
+            {
+                num:'4',
+                realNum:'4',
+                type:'spades',
+            },
+        ]
+    },
+    getTypeName(name){
+        if(name === "heart"){
+            return "红桃"
+        }
+        if(name === "diamond"){
+            return "钻石"
+        }
+        if(name === "club"){
+            return "梅花"
+        }
+        if(name === "spades"){
+            return "黑桃"
+        }
     }
 }
