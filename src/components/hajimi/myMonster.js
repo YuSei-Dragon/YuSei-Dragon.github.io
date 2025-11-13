@@ -115,6 +115,8 @@ export default {
         return {
             ...myMonsterList[0],
             lifeNow:myMonsterList[0].life,
+            flash:false,
+            helpless:false,
         }
     },
     getTestBotList(){
@@ -124,6 +126,8 @@ export default {
         return {
             ...testBotList[0],
             lifeNow:testBotList[0].life,
+            flash:false,
+            helpless:false,
         }
     }
 }

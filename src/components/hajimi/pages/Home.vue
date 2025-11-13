@@ -73,24 +73,24 @@ const init = ()=>{
   allMes.value.stepName = "开始阶段"
   // allMes.value.allMesMy.cardGroundList = basicCardList.getTestUsedCardList()
   allMes.value.allMesMy.monsterList = myMonster.getTestMyMonsterList()
-  allMes.value.allMesMy.monsterNow = myMonster.getTestMyMonsterList()[0]
   allMes.value.allMesMy.monsterNow = myMonster.getTestMyMonsterOn()
   allMes.value.allMesMy.playerNow = {
     name: allMes.value.allMesMy.playerMes.name,
     life:100,
     lifeNow:100,
     power:3,//当前玩家的气
+    weak:0,//当前玩家的虚弱回合数
   }
 
   // allMes.value.allMesBot.cardGroundList = basicCardList.getTestUsedCardList()
   allMes.value.allMesBot.monsterList = myMonster.getTestBotList()
-  allMes.value.allMesBot.monsterNow = myMonster.getTestBotList()[0]
   allMes.value.allMesBot.monsterNow = myMonster.getTestBotOn()
   allMes.value.allMesBot.playerNow = {
     name: allMes.value.allMesBot.playerMes.name,
     life:100,
     lifeNow:100,
     power:3,//当前玩家的气
+    weak:0,//当前玩家的虚弱回合数
   }
   allMes.value.cardList = basicCardList.getTestUsedCardList()
   allMes.value.stepName = "主要阶段"

@@ -91,7 +91,7 @@ defineExpose({
 </script>
 <template lang="pug">
 .my-block
-    el-tooltip( effect="light" style="padding:0px;margin:0px;" placement="top-end")
+    el-tooltip( effect="light" style="padding:0px;margin:0px;" placement="left-start")
         template(#content v-if="props.allMes.playingNow===props.allMes.allMesMy.playerNow.name") 
             .head-buttons-block()
                 .head-buttons(@click="changeMonster") 换人

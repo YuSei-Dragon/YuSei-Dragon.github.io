@@ -1,5 +1,6 @@
 import basicCardList from "@/components/hajimi/basicCardList.js"
 import cardMethod from "@/components/hajimi/cardMethod.js"
+import skillList from "@/components/hajimi/skillList.js"
 
 export default {
     whoFirst(allMes){
@@ -12,10 +13,20 @@ export default {
         allMes.playingNow = allMes.allMesBot.playerNow.name
         allMes.stepName = "准备阶段"
         //执行判定等效果结算
+        let isHelpless = false
+        // console.log("检查bot状态",allMes.allMesBot.monsterNow)
+        if(allMes.allMesBot.monsterNow.helpless){
+            console.log("bot进行兵粮寸断判定")
+            const res = await this.dealHelpless(allMes,"allMesMy")
+            isHelpless = res.isHelpless
+            allMes = res.allMes
+        }
         //准备阶段
         allMes.allMesBot.cardGroundList.forEach(item=>{
             item.prepare = true
         })//处理覆盖的卡可发动
+        allMes = this.resetFlash(allMes)
+        //重置闪保护等单回合效果
         allMes.allMesMy.cardGroundList.forEach(item=>{
             item.prepare = true
         })//处理覆盖的卡可发动
@@ -23,8 +34,14 @@ export default {
             allMes.stepName = "开始阶段"
             allMes = basicCardList.drawCard(allMes,"allMesBot",2)
             //摸两张卡
-            allMes.allMesBot.playerNow.power+=2
-            //回两格气
+            if(isHelpless){
+                allMes.allMesBot.playerNow.power+=1
+                //中了兵粮寸断，只回一格气 
+            }else{
+                allMes.allMesBot.playerNow.power+=2
+                //回两格气 
+            }
+            
         })
         await this.waitToDo(1000,async ()=>{
         allMes.stepName = "主要阶段"
@@ -40,6 +57,9 @@ export default {
         allMes.stepName = "结束阶段"
        })
        console.log("bot结束回合")
+       if(allMes.allMesBot.playerNow.weak>0){
+            allMes.allMesBot.playerNow.weak--
+       }//bot回合结束，虚弱回合数减一
        return allMes
     },
     async myTurn(allMes){
@@ -54,6 +74,9 @@ export default {
             allMes.allMesMy.cardGroundList.forEach(item=>{
                 item.prepare = true
             })//处理覆盖的卡可发动
+            allMes = this.resetFlash(allMes)
+            //重置闪保护等单回合效果
+
         })
         console.log("我方准备阶段处理完毕")
         //执行判定等效果结算
@@ -114,7 +137,7 @@ export default {
                 allMes = await cardMethod.dealChain(allMes)
                 allMes.chain = []
                 //处理这张卡的效果
-                allMes.cardUsedList.push(basicCardList.getMesByCardName(choiceCardMes.cardName))
+                allMes.cardUsedList.push(this.getClearUsed(basicCardList.getMesByCardName(choiceCardMes.cardName)))
                 //送入墓地
             }//重复调用直到没有牌可以发动或者放置
             return await this.waitToDo(1000,async()=>{
@@ -163,7 +186,7 @@ export default {
         }
     },//递归连锁方法，直到选择否为止，不停的询问我方是否继续连锁
     async coverCards(allMes){
-        if(allMes.allMesBot.cardGroundList.length===3||!stop){
+        if(allMes.allMesBot.cardGroundList.length===3){
             console.log("bot战术区满了/没有可以盖的卡了",allMes)
             return allMes
         }else{
@@ -182,10 +205,16 @@ export default {
                     }
                 })
             }
-            allMes.allMesBot.handCardList = handCardList
-            return await this.waitToDo(1000,async()=>{
-                return await this.coverCards(allMes)
-            })//递归调用，直到没有被动卡可以覆盖或者战术区满了
+            if(stop){
+                allMes.allMesBot.handCardList = handCardList
+                return await this.waitToDo(1000,async()=>{
+                    return await this.coverCards(allMes)
+                })//递归调用，直到没有被动卡可以覆盖或者战术区满了
+            }else{
+                console.log("bot战术区满了/没有可以盖的卡了",allMes)
+                return allMes
+            }
+            
         }
     },
     botUseCardOne(allMes){
@@ -194,10 +223,14 @@ export default {
         let cardName = ""
         let handCardList = []
         allMes.allMesBot.handCardList.forEach(item=>{
-            if(cardMethod.checkCardCanUse(allMes,item,"allMesBot")&&stop===false){
+            if(cardMethod.checkCardCanUse(allMes,item,"allMesBot")&&stop===false&&cardMethod.specialCardUse(allMes,item.name)){
                 //如果这张牌需要的气小于等于当前玩家的气，就使用这张牌
-                stop = true
-                cardName = item.name
+                if(cardMethod.specialCardUse(allMes,item.name)){
+                    stop = true
+                    cardName = item.name
+                }else{
+                    handCardList.push(item)
+                }
             }else{
                 handCardList.push(item)
             }
@@ -211,6 +244,19 @@ export default {
     },
     async botUseSkill(allMes){
         console.log("bot使用技能")
+        const botSkill = skillList.getBotUseSkill(allMes)
+        //得到bot使用的技能
+        allMes.chain.push({
+            card: botSkill,
+            user:"allMesBot"
+        })
+        if(allMes.allMesMy.cardGroundList.length>0){
+                allMes = await cardMethod.myUseChain(allMes)
+        }else{
+            console.log("处理连锁结果",allMes.chain)
+            allMes = await cardMethod.dealChain(allMes)
+            allMes.chain = []
+        }
         return allMes
     },
     async waitToDo(time,fun){
@@ -222,5 +268,78 @@ export default {
         if (typeof fun === 'function') {
             return await fun();
         }
-    }//等待执行完成
+    },//等待执行完成
+    resetFlash(allMes){
+        allMes.allMesMy.monsterNow.flash = false
+        allMes.allMesBot.monsterNow.flash = false
+        allMes.allMesMy.monsterNow.penetrate = false
+        allMes.allMesBot.monsterNow.penetrate = false
+        return allMes
+    },
+    async dealHelpless(allMes,user){
+        // allMes.cardList[0]//展示这张判定牌
+        let judgeMes = {
+            user:user,
+            type:"type",//种类/点数/属性
+            value:"strategy",//策略卡/具体数值
+            name:"兵粮寸断",//处理的卡/技能名字
+            num:1,
+            stop:"num",//怎么停止，num是停止的数量，find是找到对应卡牌为止
+        }
+        return new Promise( (resolve)=>{
+            this.waitToDo(1000,()=>{
+                if (typeof this.showJudgeDialog === 'function') {
+                    console.log("显示判定弹窗")
+                    this.showJudgeDialog(allMes,judgeMes, async(dialogResult) => {
+                        console.log("判定结果",dialogResult)
+                        allMes = dialogResult.allMes
+                        //返回了判定的list数组
+                        let isHelpless
+                        if(Array.isArray(dialogResult.judgeList)){
+                            dialogResult.judgeList.forEach(item=>{
+                                allMes.cardUsedList.push(this.getClearUsed(item))
+                            })//判定完毕，移入墓地
+                            if(dialogResult.judgeList[0].type==="strategy"){
+                                isHelpless = true
+                            }else{
+                                isHelpless = false
+                            }
+                            resolve({
+                                allMes:allMes,
+                                isHelpless:isHelpless,
+                            })
+                        }else{
+                            console.log("判定出错，返回的判定结果不为数组")
+                            resolve({
+                                allMes:allMes,
+                                isHelpless:false,
+                            })
+                        }
+                        
+                        
+                    })
+                } else {
+                    console.error("showJudgeDialog方法未定义")
+                    resolve({
+                        allMes:allMes,
+                        isHelpless:false,
+                    })
+                }
+            })
+        })
+       
+        
+    },//兵粮寸断的判定
+    getClearUsed(item){
+        return {
+            id: item.id,
+            name: item.name,
+            desc:item.desc,
+            type:item.type,
+            scene:item.scene,
+            speed:item.speed,
+            cost: item.cost,
+            num:item.num,
+        }
+    },//获取清理后的回收卡牌
 }

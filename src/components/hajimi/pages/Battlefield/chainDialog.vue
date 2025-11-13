@@ -9,6 +9,7 @@ import {
 } from 'vue'
 import {useStore} from 'vuex'
 import basicCardList from '../../basicCardList'
+import cardMethod from '../../cardMethod'
 const store = useStore()
 const props = defineProps({
     allMes:{
@@ -23,6 +24,10 @@ onMounted(()=>{
 const chainYes = ()=>{
     if(choiced.value === -1){
       return store.commit("setBullFightTip","请先选择一张卡片")
+    }
+    //检查连锁发动是否成立/卡牌能否连锁上
+    if(!cardMethod.specialCardUse(allMes.value,allMes.value.allMesMy.cardGroundList[choiced.value].name,"allMesMy")){
+      return store.commit("setBullFightTip","该卡牌不能连锁上")
     }
     allMes.value.chain.push({
       card:basicCardList.getMesByCardName(allMes.value.allMesMy.cardGroundList[choiced.value].name),

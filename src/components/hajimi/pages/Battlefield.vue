@@ -11,6 +11,7 @@ const store = useStore()
 import basicCardList from '@/components/hajimi/basicCardList.js'
 import fightMethods from '@/components/hajimi/fightMethods.js'
 import cardMethod from '../cardMethod'
+import chainCard from '../chainCard'
 const Botfield = defineAsyncComponent(() =>
   import("./Battlefield/Botfield.vue")
 )
@@ -26,8 +27,23 @@ const FightGround = defineAsyncComponent(() =>
 const ChainDialog = defineAsyncComponent(() =>
   import("./Battlefield/chainDialog.vue")
 )
+const JudgeDialog = defineAsyncComponent(() =>
+  import("./Battlefield/judgeDialog.vue")
+)
+const SelectCardDialog = defineAsyncComponent(() =>
+  import("./Battlefield/selectCardDialog.vue")
+)
+const SeeStartDialog = defineAsyncComponent(() =>
+  import("./Battlefield/seeStartDialog.vue")
+)
+const GetMoreDialog = defineAsyncComponent(() =>
+  import("./Battlefield/getMoreDialog.vue")
+)
 const ChangeMonsterDialog = defineAsyncComponent(() =>
   import("./Battlefield/changeMonsterDialog.vue")
+)
+const ShowCards = defineAsyncComponent(() =>
+  import("./Battlefield/showCards.vue")
 )
 const props = defineProps({
     allMes:{
@@ -37,7 +53,12 @@ const props = defineProps({
 })
 const allMes = ref({})
 const dialogCallback = ref(null)
+const selectDialogCallback = ref(null)
+const judgeDialogCallback = ref(null)
+const isShowJudgeDialog = ref(false)
 const isShowChainDialog = ref(false)
+const isShowSelectCard = ref(false)
+const thisJudgeMes = ref({})
 onMounted(()=>{
   fightMethods.showChainDialog = (allMes,callBack)=>{
     if (typeof callBack === 'function') {
@@ -46,6 +67,17 @@ onMounted(()=>{
       dialogCallback.value = callBack
       isShowChainDialog.value = true
       console.log("连锁链初始化状态",allMes.chain)
+    } else {
+      console.error("callBack不是一个函数")
+    }
+  }
+  fightMethods.showJudgeDialog = (allMes,judgeMes,callBack)=>{
+    if (typeof callBack === 'function') {
+      console.log("判定牌方法",judgeMes)
+      allMes.value = {...allMes.value}
+      thisJudgeMes.value = {...judgeMes}
+      judgeDialogCallback.value = callBack
+      isShowJudgeDialog.value = true
     } else {
       console.error("callBack不是一个函数")
     }
@@ -61,8 +93,80 @@ onMounted(()=>{
       console.error("callBack不是一个函数")
     }
   }
+  chainCard.showSelectCardDialog = (allMes,type,name,callBack)=>{
+    if (typeof callBack === 'function') {
+      allMes.value = {...allMes.value}
+      //刷新数据
+      selectDialogCallback.value = callBack
+      cardChoiceTabList.value = [...type]
+      selectCardName.value = name
+      isShowSelectCard.value = true
+      console.log("选择卡牌初始化状态",allMes.chain)
+    } else {
+      console.error("callBack不是一个函数")
+    }
+  }
+ 
+  chainCard.showCards = async (user,showCardList,callBack)=>{
+    if (typeof callBack === 'function') {
+      setTimeout(() => {
+        showCardsCallback.value = callBack
+        showCardsMes.value.user = user
+        showCardsMes.value.showCardList = showCardList
+        isShowCards.value = true
+        console.log("打开展示卡牌弹窗")
+      }, 1000);
+    } else {
+      console.error("callBack不是一个函数")
+    }
+  }
+  chainCard.showSeeStart = async (callBack)=>{
+    if (typeof callBack === 'function') {
+      setTimeout(() => {
+        showSeeStartCallback.value = callBack
+        isShowSeeStart.value = true
+        console.log("打开展示卡牌弹窗")
+      }, 1000);
+    } else {
+      console.error("callBack不是一个函数")
+    }
+  }
+  chainCard.showGetMore = async (callBack)=>{
+    if (typeof callBack === 'function') {
+      setTimeout(() => {
+        showGetMoreCallback.value = callBack
+        isShowGetMore.value = true
+        console.log("打开展示得寸进尺弹窗")
+      }, 1000);
+    } else {
+      console.error("callBack不是一个函数")
+    }
+  }
   init()
 })
+const isShowCards = ref(false)
+const showCardsCallback = ref(null)
+const showSeeStartCallback = ref(null)
+const showGetMoreCallback = ref(null)
+const showCardsMes = ref({
+  user:"",
+  showCardList:[]
+})
+const cardChoiceTabList = ref([])
+const closeShowCards = ()=>{
+  console.log("关闭展示卡牌")
+  if(showCardsCallback.value){
+    showCardsCallback.value()
+    setTimeout(() => {
+    showCardsMes.value = {
+      user:"",
+      showCardList:[]
+    }
+    isShowCards.value = false
+    }, 100);
+  }
+}
+const selectCardName = ref("")
 const init = ()=>{
   allMes.value = {
     ...props.allMes,
@@ -115,6 +219,10 @@ const changeStep = (data)=>{
   if(data === "结束阶段"){
     //如果我方点击结束阶段，则结束我方回合，进入对方回合
     showTip("我方结束回合")
+    if(allMes.value.allMesMy.playerNow.weak>0){
+      showTip("我方回合被虚弱回合减一")
+      return
+    }//我方回合被虚弱回合减一
     waitToDo(1000,async()=>{
       allMes.value.playingNow = allMes.value.allMesBot.playerMes.name
       //当前操作玩家改变
@@ -182,6 +290,32 @@ const chainNo = (allMes)=>{
     }, 100);
   }
 }
+const judgeEnd = (judgeList)=>{
+  // console.log("judgeEnd",judgeList)
+  if (judgeDialogCallback.value) {
+    // 正确调用回调函数
+    judgeDialogCallback.value(judgeList);
+    // 调用完成后关闭弹窗并清空回调
+    setTimeout(() => {
+      isShowJudgeDialog.value = false;
+      judgeDialogCallback.value = null;
+    }, 100);
+  }
+}
+const selectSure = (choiceCardList)=>{
+  if (selectDialogCallback.value) {
+    console.log("确认卡牌选择结果",choiceCardList)
+    // 正确调用回调函数
+    selectDialogCallback.value(choiceCardList);
+    // 调用完成后关闭弹窗并清空回调
+    setTimeout(() => {
+      cardChoiceTabList.value = []
+      isShowSelectCard.value = false;
+      selectDialogCallback.value = null;
+    }, 100);
+  }
+}
+
 const myfield  = ref(null)
 const cleanChoiced = ()=>{
   console.log("cleanChoiced")
@@ -191,10 +325,15 @@ const sureUse = async(data)=>{
   console.log(data)
   //使用的卡/技能数据
   cleanChoiced()//清除选中
-  allMes.value = await cardMethod.useCardAndSkill(allMes.value,data)
-  console.log("使用卡/技能后状态",allMes.value.chain)
-  allMes.value = await cardMethod.botUseChain(allMes.value)
-  console.log("本次卡牌发动连锁处理完成",allMes.value.chain)
+  if(cardMethod.specialCardUse(allMes.value,data.card.name,"allMesMy")){
+    allMes.value = await cardMethod.useCardAndSkill(allMes.value,data)
+    console.log("使用卡/技能后状态",allMes.value.chain)
+    allMes.value = await cardMethod.botUseChain(allMes.value)
+    console.log("本次卡牌发动连锁处理完成",allMes.value.chain)
+  }else{
+    showTip("不符合发动前提")
+  }
+  
 }
 const showChangeMonster = ref(false)
 const changeMonster = ()=>{
@@ -214,6 +353,25 @@ const changeMonsterSure = async(data)=>{
     allMes.value = await fightMethods.myTurn(allMes.value)
   })
 }//我方换人方法
+const isShowSeeStart = ref(false)
+const closeSeeStart = (allMes)=>{
+  if(showSeeStartCallback.value){
+    showSeeStartCallback.value(allMes)
+    setTimeout(() => {
+    isShowSeeStart.value = false
+    }, 100);
+  }
+}
+const isShowGetMore = ref(false)
+
+const closeGetMore = (allMes)=>{
+  if(showGetMoreCallback.value){
+    showGetMoreCallback.value(allMes)
+    setTimeout(() => {
+    isShowGetMore.value = false
+    }, 100);
+  }
+}
 </script>
 
 <template lang="pug">
@@ -221,6 +379,16 @@ const changeMonsterSure = async(data)=>{
     .battle-tip
     .battle-chain-block(v-show="isShowChainDialog")
       ChainDialog(:allMes="allMes"  @chainYes="chainYes" @chainNo="chainNo")
+    .judge-dialog-block(v-if="isShowJudgeDialog")
+      JudgeDialog(:allMes="allMes" :judgeMes="thisJudgeMes" @judgeEnd="judgeEnd")
+    .select-card-block(v-if="isShowSelectCard")
+      SelectCardDialog(:allMes="allMes" @selectSure="selectSure" :cardChoiceTabList="cardChoiceTabList" :selectCardName="selectCardName")
+    .show-card-block(v-if="isShowCards")
+      ShowCards(:showCardsMes="showCardsMes" @closeShowCards="closeShowCards")
+    .see-start-block(v-if="isShowSeeStart")
+      SeeStartDialog(:allMes="allMes" @closeSeeStart="closeSeeStart")
+    .get-more-block(v-if="isShowGetMore")
+      GetMoreDialog(:allMes="allMes" @closeGetMore="closeGetMore")
     .change-monster-block(v-show="showChangeMonster")
       ChangeMonsterDialog(:allMes="allMes" @cancleChange="cancleChange" @changeMonster="changeMonsterSure")
     .bot-block 
@@ -243,6 +411,61 @@ const changeMonsterSure = async(data)=>{
   left: 0px;
  }
 .battle-chain-block{
+  width: 300px;
+  height: 200px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  border-radius: 10px;
+  background-color: #fff;
+  z-index: 9;
+  border: 1px #ddd solid;
+}
+.judge-dialog-block{
+  width: 120px;
+  height: 200px;
+  position: absolute;
+  top: 100px;
+  left: 190px;
+  border-radius: 10px;
+  background-color: #fff;
+  z-index: 9;
+  border: 1px #ddd solid;
+}
+.show-card-block{
+  width: 120px;
+  height: 200px;
+  position: absolute;
+  top: 100px;
+  left: 190px;
+  border-radius: 10px;
+  background-color: #fff;
+  z-index: 9;
+  border: 1px #ddd solid;
+}
+.see-start-block{
+  width: 300px;
+  height: 300px;
+  position: absolute;
+  top: 50px;
+  left: 100px;
+  border-radius: 10px;
+  background-color: #fff;
+  z-index: 9;
+  border: 1px #ddd solid;
+}
+.get-more-block{
+  width: 300px;
+  height: 240px;
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  border-radius: 10px;
+  background-color: #fff;
+  z-index: 9;
+  border: 1px #ddd solid;
+}
+.select-card-block{
   width: 300px;
   height: 200px;
   position: absolute;

@@ -31,21 +31,30 @@ export default {
         //处理连锁链
         console.log("处理连锁开始",allMes.chain)
         if(Array.isArray(allMes.chain)&&allMes.chain.length>0){
-            for(const item of allMes.chain){
-                await this.waitToDo(async()=>{
+            let chain = []
+            for(let i = allMes.chain.length-1;i>=0;i--){
+                chain.push(allMes.chain[i])
+            }//后发先至，反转连锁链
+            for(const [index,item] of chain.entries()){
+                await this.waitToDo(1000,async()=>{
                     if(basicCardList.isCard(item.card.name)){
                         console.log("处理卡的方法",item.card.name)
-                        allMes = await basicCardList.useCard(allMes,item.card.name,item.user)
+                        allMes = await basicCardList.useCard(allMes,item.card.name,item.user,index)
                     }else{
                         console.log("处理技能的方法",item.card.name)
-                        allMes = await skillList.useCard(allMes,item.card.name,item.user)
+                        allMes = await skillList.useCard(allMes,item.card.name,item.user,index)
                     }
-                },1000)
+                })
                 
             }
         }else{
             console.log("连锁链为空")
         }
+        allMes.chain.forEach(item=>{
+            if(basicCardList.isCard(item.card.name)){
+                allMes.cardUsedList.push(basicCardList.getMesByCardName(item.card.name))
+            }//保证卡牌参数的纯净
+        })//处理完连锁的卡进入墓地
         allMes.chain = []
         return allMes
     },//处理连锁链方法
@@ -98,7 +107,7 @@ export default {
                 console.log("处理bot的盖卡发动")
                 let cardGroundList = []
                 allMes.allMesBot.cardGroundList.forEach((item,index)=>{
-                    if(index === 0){
+                    if(index === 0&&this.specialCardUse(allMes,item.name)){
                         //可以使用
                         allMes.chain.push({
                             type:"cardCover",
@@ -113,7 +122,7 @@ export default {
                 //去掉一张盖卡，加入连锁链
                 console.log("bot盖卡加入连锁")
                 return await this.waitToDo(1000,async()=>{
-                    if(allMes.allMesMy.cardGroundList.length===0){
+                    if(!this.checkCardGroundCanUse(allMes.allMesMy.cardGroundList)){
                         //我方没有可连锁盖牌
                         console.log("我方没有盖卡，无法继续连锁")
                         console.log("处理连锁结果",allMes.chain)
@@ -151,16 +160,22 @@ export default {
                         //新的连锁cardGroundList
                         allMes = dialogResult
                         return await this.waitToDo(1000,async()=>{
-                            if(allMes.allMesBot.cardGroundList.length===0){
+                            let canChain = false
+                            for(let i of allMes.allMesBot.cardGroundList){
+                                if(this.specialCardUse(allMes,i.name)){
+                                    canChain = true
+                                }
+                            }
+                            if(canChain&&this.checkCardGroundCanUse(allMes.allMesBot.cardGroundList)){
+                                console.log("bot有可连锁盖牌，继续连锁")
+                                    allMes = await this.botUseChain(allMes)
+                                //进入bot连锁方法
+                                resolve(allMes)
+                            }else{
                                 //我方没有可连锁盖牌
                                 console.log("bot没有可连锁盖牌，无法继续连锁")
                                 console.log("处理连锁结果",allMes.chain)
                                 allMes = await this.dealChain(allMes)
-                                resolve(allMes)
-                            }else{
-                                console.log("bot有可连锁盖牌，继续连锁")
-                                allMes = await this.botUseChain(allMes)
-                                //进入bot连锁方法
                                 resolve(allMes)
                             }
                         })
@@ -187,6 +202,120 @@ export default {
         if (typeof fun === 'function') {
             return await fun();
         }
-    }//等待执行完成
-
+    },//等待执行完成
+    specialCardUse(allMes,cardName,who="allMesBot"){
+        console.log("判断卡牌能不能使用：",cardName,who)
+        if(cardName==="了如指掌"){
+            if(who === "allMesBot"){
+                return allMes.allMesMy.cardGroundList.length>0
+            }else{
+                return allMes.allMesBot.cardGroundList.length>0
+            }
+            
+        }//这张卡必须对方战术区有卡才能发动
+        if(cardName==="落井下石"){
+            if(who === "allMesBot"){
+                if(allMes.chain.length===0){
+                    return false
+                }
+                return(allMes.chain[allMes.chain.length-1].card.type === "skill"
+                    &&allMes.chain[allMes.chain.length-1].user==="allMesMy")
+                //检查上一个连锁是不是对方的技能
+            }else{
+                if(allMes.chain.length===0){
+                    return false
+                }
+                return(allMes.chain[allMes.chain.length-1].card.type === "skill"
+                    &&allMes.chain[allMes.chain.length-1].user==="allMesBot")
+                //检查上一个连锁是不是对方的技能
+            }
+            
+        }//这张卡必须上一个连锁是对方技能才能发动
+        if(cardName==="兵粮寸断"){
+            if(who === "allMesBot"){
+                return allMes.allMesMy.monsterNow?.helpless === false
+            }else{
+                return allMes.allMesBot.monsterNow?.helpless === false
+            }
+        }//这张卡不能对已经上了兵粮寸断标记的玩家使用
+        if(cardName==="如法炮制"){
+            if(allMes.cardUsedList.length<=0){
+                return false
+            }else{
+                let res = false
+                for(let i of allMes.cardUsedList){
+                    if(i.type === "basic"){
+                        res = true
+                    }
+                }
+                return res
+            }
+        }//这张卡必须墓地有基本卡才能发动
+        if(cardName==="党同伐异"){
+            if(who === "allMesBot"){
+                return allMes.allMesMy.handCardList.length>0
+            }else{
+                allMes.allMesBot.handCardList.length>0
+            }
+        }//这张卡必须对方有手牌才能发动
+        if(cardName==="各怀鬼胎"){
+            return allMes.allMesMy.handCardList.length>0
+                &&allMes.allMesBot.handCardList.length>0
+        }//这张卡必须双方都有手牌才能发动
+        if(cardName === "洞若观火"){
+            if(allMes.chain.length<=0){
+                return false
+            }else{
+                return(basicCardList.getMesByCardName(allMes.chain[allMes.chain.length-1].card.name)?.type === "strategy")?true:false
+                //检查上一个连锁是不是策略卡
+            }
+        }//这张啊只能连锁策略卡发动
+        if(cardName === "凝神运气"){
+            if(allMes[who].handCardList.length<=0){
+                return false
+            }return true
+        }//这张卡必须有手卡才能发动
+        if(cardName === "重整旗鼓"){
+            let res = false
+            allMes.cardUsedList.forEach(item=>{
+                if(item.type === "basic"){
+                    res = true
+                }
+            })
+            return res
+        }//这张卡必须墓地有基本卡才能发动
+        if(cardName === "等价交换"){
+            if(allMes.allMesMy.cardGroundList.length>0&&allMes.allMesBot.cardGroundList.length>0){
+                return false
+            }return true
+        }//这张卡必须双方战术区有卡才能发动
+        if(cardName === "黑魔法"){
+            let res = false
+            allMes.cardUsedList.forEach(item=>{
+                if(item.type === "strategy"){
+                    res = true
+                }
+            })
+            return res
+        }//这张卡必须墓地有策略卡才能发动
+        if(cardName === "破釜沉舟"){
+            if(allMes[who].playerNow.power>0){
+                return true
+            }return false
+        }//这张卡必须使用者有气才能发动
+        return true
+    },//检查卡牌发动前提的方法 默认为bot使用
+    checkCardGroundCanUse(list){
+        if(Array.isArray(list)&&list.length>0){
+            let res = false
+            list.forEach(item=>{
+                if(item.prepare === true){
+                    res = true
+                }
+            })
+            return res
+        }else{
+            return false
+        }
+    }
 }
