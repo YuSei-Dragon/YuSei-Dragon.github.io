@@ -443,7 +443,7 @@ export default {
                 cardListNew.push(card)
             })
             allMes.cardList = cardListNew
-            let delIndex = cardList[myCard[0].index].index
+            let delIndex = cardListNew[myCard[0].index].index
             allMes.cardUsedList.filter((item,index)=>{
                 return index !== delIndex
             })//从墓地去掉这张卡
@@ -467,7 +467,7 @@ export default {
         //记录当前剩下多少气
         allMes = this.drawCard(allMes,user,qiNum)
         allMes[user].playerNow.power = 3
-        allMes[user].playerNow.weak = qiNum
+        allMes[user].playerNow.weak += qiNum
         return allMes
     },//破釜沉舟的处理方法
     drawCard(allMes,user,num){

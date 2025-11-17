@@ -170,8 +170,8 @@ const selectCardName = ref("")
 const init = ()=>{
   allMes.value = {
     ...props.allMes,
-    // cardList : basicCardList.getAllCardList(),
-    cardList : basicCardList.getTestAllCardList(),
+    cardList : basicCardList.getAllCardList(),
+    // cardList : basicCardList.getTestAllCardList(),
   }
   allMes.value = basicCardList.drawCard(allMes.value,"allMesMy",4)
   allMes.value = basicCardList.drawCard(allMes.value,"allMesBot",4)
