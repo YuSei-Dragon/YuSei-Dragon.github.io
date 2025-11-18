@@ -5,6 +5,7 @@
     <!-- <fishing/> -->
     <router-view></router-view>
     <div class="to-desk" @click="toDesk()">我的文档</div>
+    <div class="to-hjm" @click="toHJM()">HJM</div>
   </div>
 </template>
 
@@ -30,6 +31,11 @@ export default {
       router.push({
         path:"/desk"
       })
+    },
+    toHJM(){
+      router.push({
+        path:"/hajimi"
+      })
     }
   }
 }
@@ -52,6 +58,17 @@ export default {
   color: #666;
   cursor: pointer;
   background: #fff;
-
+}
+.to-hjm{
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 100px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  color: #666;
+  cursor: pointer;
+  background: #fff;
 }
 </style>
