@@ -1,4 +1,5 @@
 import {createStore} from "vuex";
+import hajimiReset from "../components/hajimiReset/store"
 const $store = createStore({
    //state可以看作是全局公共的数据，需要的组件可以调用
     state: {
@@ -45,7 +46,9 @@ const $store = createStore({
         }
     },
     actions: {},
-    modules: {}
+    modules: {
+        hajimiReset
+    }
 })
 
 export default $store;

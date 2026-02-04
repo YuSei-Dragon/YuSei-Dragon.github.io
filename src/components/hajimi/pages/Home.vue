@@ -113,6 +113,7 @@ const page = ref("home")
     width: 100wh;
     height: 100vh;
     position: relative;
+    background: #222;
 }
 .tip-block{
   position: absolute;

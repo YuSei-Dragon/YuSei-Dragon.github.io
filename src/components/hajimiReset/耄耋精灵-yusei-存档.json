@@ -1,0 +1,132 @@
+{
+    "version": "0.1.0",
+    "isTs": true,
+    "challengeMes": {
+        "classicalChallenge": {
+            "level": 1
+        }
+    },
+    "wildMonster": {},
+    "playerMes": {
+        "monsterList": [
+            {
+                "name": "小火猴",
+                "race": {
+                    "atk": 58,
+                    "def": 44,
+                    "atkMagic": 58,
+                    "defMagic": 44,
+                    "life": 44,
+                    "speed": 61
+                },
+                "individual": {
+                    "atk": 2,
+                    "atkMagic": 4,
+                    "def": 46,
+                    "defMagic": 31,
+                    "life": 24,
+                    "speed": 49
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 0
+                },
+                "attribute": "火",
+                "level": 5,
+                "experience": 0,
+                "skillList": [
+                    "抓",
+                    "瞪眼"
+                ],
+                "allSkillList": []
+            },
+            {
+                "name": "布布种子",
+                "race": {
+                    "atk": 69,
+                    "def": 65,
+                    "atkMagic": 45,
+                    "defMagic": 55,
+                    "life": 55,
+                    "speed": 31
+                },
+                "individual": {
+                    "atk": 46,
+                    "atkMagic": 43,
+                    "def": 48,
+                    "defMagic": 4,
+                    "life": 48,
+                    "speed": 6
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 0
+                },
+                "attribute": "木",
+                "level": 5,
+                "experience": 0,
+                "skillList": [
+                    "撞击",
+                    "缩头"
+                ],
+                "allSkillList": []
+            },
+            {
+                "name": "伊优",
+                "race": {
+                    "atk": 51,
+                    "def": 53,
+                    "atkMagic": 61,
+                    "defMagic": 56,
+                    "life": 53,
+                    "speed": 40
+                },
+                "individual": {
+                    "atk": 37,
+                    "atkMagic": 37,
+                    "def": 42,
+                    "defMagic": 39,
+                    "life": 26,
+                    "speed": 9
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 0
+                },
+                "attribute": "水",
+                "level": 5,
+                "experience": 0,
+                "skillList": [
+                    "拍打",
+                    "鸣叫"
+                ],
+                "allSkillList": []
+            }
+        ],
+        "monsterFightList": [
+            0,
+            1,
+            2
+        ],
+        "name": "yusei",
+        "levle": 1,
+        "rune": {
+            "normal": 10,
+            "fortify": 5,
+            "superFortify": 1,
+            "supreme": 0
+        }
+    }
+}

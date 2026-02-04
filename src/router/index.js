@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
- 
+// 导入hajimiReset的路由配置
+import hajimiResetRoutes from '@/components/hajimiReset/router/index'
+
 const routes = [
     // Home是父级
     {
@@ -39,7 +41,9 @@ const routes = [
     {
         path: "/hajimi",
         component: () => import('@/components/hajimi/pages/Home'),
-    }
+    },
+    // 使用展开运算符导入hajimiReset的所有路由
+    ...hajimiResetRoutes
 ]
  
 const router = createRouter({

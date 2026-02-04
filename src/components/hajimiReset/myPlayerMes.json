@@ -1,0 +1,66 @@
+{
+    "version": "0.1.1",
+    "playerMes": {
+        "monsterList": [
+            {
+                "name": "小哈基汪",
+                "individual": {
+                    "atk": 200,
+                    "atkMagic": 200,
+                    "def": 200,
+                    "defMagic": 200,
+                    "life": 200,
+                    "speed": 200
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 0
+                },
+                "attribute": "土",
+                "level": 1,
+                "skillList": [
+                    "摇尾巴",
+                    "撕咬",
+                    "低吼",
+                    "哈基汪大旋风"
+                ]
+            },
+            {
+                "name": "小哈基汪",
+                "individual": {
+                    "atk": 200,
+                    "atkMagic": 200,
+                    "def": 200,
+                    "defMagic": 200,
+                    "life": 200,
+                    "speed": 200
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 0
+                },
+                "attribute": "土",
+                "level": 1,
+                "skillList": [
+                    "摇尾巴",
+                    "撕咬",
+                    "低吼",
+                    "哈基汪大旋风"
+                ]
+            }
+        ],
+        "monsterFightList": [
+            0
+        ],
+        "name": "耄耋训练家",
+        "levle": 1
+    }
+}
