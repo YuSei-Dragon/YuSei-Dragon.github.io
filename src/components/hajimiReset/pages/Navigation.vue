@@ -105,6 +105,8 @@ const changePage = (title) => {
   }
 }
 const loginTest = () =>{
+    allMes.value = basicSetting.getTestSetting()
+    store.commit("hajimiReset/setAllMes",allMes.value)
     initMes(basicSetting.getTestSetting())
 }
 const register = () =>{
@@ -139,7 +141,7 @@ const exportMes = () =>{
 .navigation-block
     .navigation-test(@click="loginTest()") 模拟登陆
     .navigation-player-block
-        .navigation-player-name(v-if="haveInitMes" @click="exportMes()") {{allMes?.playerMes.name}} 导出存档
+        .navigation-player-name(v-if="haveInitMes" @click="exportMes()") {{allMes?.playerMes?.name}} 导出存档
         .navigation-login(v-if="!haveInitMes" @click="pending = true") 登陆/注册
     .navigation-title-block
         .navigation-title(v-for="title in titleList" :key="title" 
