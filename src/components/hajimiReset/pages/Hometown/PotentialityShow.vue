@@ -35,6 +35,7 @@ const initMes = ()=>{
     // console.log(allMes.value)
     // 创建深拷贝，确保playerMes是独立的数据副本
     playerMes.value = JSON.parse(JSON.stringify(allMes.value.playerMes))
+    console.log(playerMes.value.monsterList)
     playerMes.value.monsterList.map(monster=>{
         skillListApi.getSkillList(monster.name,monster.level).forEach(item=>{
             if(monster.allSkillList.find(skill=>skill.name === item)){

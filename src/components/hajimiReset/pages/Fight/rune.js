@@ -1,3 +1,4 @@
+import planetJs from "../Planet/planet.js"
 export default {
     useRune(type,allMes,targetIndex,store){
         let monsterMes = allMes.fightMes.botMes.monsterList[targetIndex]
@@ -36,7 +37,8 @@ export default {
         let res = false
         let percent = 33
         console.log(type,monsterMes)
-        const probability = 2 * typeMes[type] * monsterMes.probability/100 *this.getLifeProbability(type,monsterMes,store)
+        const probability = 2 * typeMes[type] * monsterMes.probability/100 *
+            this.getLifeProbability(type,monsterMes,store) * this.getLevelProbability(monsterMes)
         console.log("probability",probability)
         if(probability>=1){
             res =  true
@@ -58,6 +60,25 @@ export default {
             res,
             percent,
         }
+    },
+    getLevelProbability(monsterMes){
+        //精灵等级会影响捕捉成功率
+        //1~20 100%
+        //21~40 80%
+        //40~60 50%
+        //>60 20%
+        let lv = monsterMes.level
+        let probability = 0
+        if(lv<=20){
+            probability = 1
+        }else if(lv<=40){
+            probability = 0.8
+        }else if(lv<=60){
+            probability = 0.5
+        }else{
+            probability = 0.2
+        }
+        return probability
     },
     getLifeProbability(type,monsterMes,store){
         //血量公式
@@ -81,6 +102,24 @@ export default {
                 race:catchMonster.race,
             }
         )
+        return allMes
+    },
+    checkBossMonster(allMes){
+        //检查是否是野生boss
+        console.log(allMes.wildMonster)
+        if(allMes.wildMonster.isBoss&&allMes.wildMonster.isBoss===true){
+            //是boss
+            let name = allMes.wildMonster.name
+            let bossName = planetJs.getBossEssence(name)
+            console.log("获得boss精元"+bossName)
+            let bossMes = planetJs.getMonsterBasicMesByName(bossName)
+            bossMes.allSkillList = []
+            bossMes.skillList.forEach(item=>{
+                bossMes.allSkillList.push({name:item,using:true})
+            })
+            allMes.playerMes.monsterList.push(bossMes)
+            console.log(bossMes)
+        }
         return allMes
     },
      calculateExperience(allMes){
@@ -165,6 +204,7 @@ export default {
         })
         // console.log(monsterList,allMes.fightMes.myMes.monsterList)
         //不上场直接抓精灵是无法获得经验的
+        let upgradeList = []
         monsterList.forEach(monster=>{
             allMes.fightMes.myMes.monsterList.map((one,index)=>{
                 if(index===monster.index){
@@ -172,17 +212,27 @@ export default {
                     //获取全部经验
                     let level = one.level
                     console.log(one.name,"获得经验",allExp,level)
-                    while(allExp>=this.upOneLv(level)){
+                    while(allExp>=this.upOneLv(level)&&level<100){
                         allExp -= this.upOneLv(level)
                         level += 1
                     }//一直升级直到经验不足
+                    if(level>one.level){
+                        upgradeList.push({
+                            name:one.name,
+                            lv:level,
+                            oldLv:one.level,
+                        })
+                    }
                     allMes.playerMes.monsterList[monster.index].level = level
                     allMes.playerMes.monsterList[monster.index].experience = allExp
                 }
             })
         })
         console.log(allMes)
-        return allMes
+        return {
+            allMes,
+            upgradeList,
+        }
     }
 
 }

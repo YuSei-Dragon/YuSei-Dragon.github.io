@@ -31,13 +31,20 @@ const props = defineProps({
         default:"standBy",
     },
 })
+const isShowMiss = ref(false)
 watch(() => props.status, (newVal, oldVal) => {
     console.log("status改变了", newVal)
     moveImg.value = newVal
+    if(newVal === "miss"){
+        isShowMiss.value = true
+    }
     if(newVal !== "standBy"){
         setTimeout(() => {
             moveImg.value = "standBy"
         }, 3000)
+        setTimeout(() => {
+            isShowMiss.value = false
+        }, 2000)
         //自动播放3秒相应的gif
     }
 }, { deep: true })
@@ -66,12 +73,24 @@ const getMonsterMoveStyle = () => {
 
 <template lang="pug">
 .monster-move-block(:style="getMonsterMoveStyle()")
-
+    .monster-miss(v-if="isShowMiss") miss
 </template>
 <style scoped lang="scss">
 .monster-move-block{
     position: relative;
     width: 100%;
     height: 100%;
+    .monster-miss{
+        position: absolute;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        height: 24px;
+        line-height: 20px;
+        top: 10px;
+        font-size: 16px;
+        background: #00abff7d;
+    }
 }
 </style>

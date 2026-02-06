@@ -35,7 +35,12 @@ const routes = [
       {
         path: 'fight/worldExplore/saier',
         name: 'HajimiResetFightWorldExploreSaier',
-        component: () => import('../pages/Planet/saier.vue')
+        component: () => import('../pages/Planet/planetVue/saier.vue')
+      },
+      {
+        path: 'fight/worldExplore/threeKingdoms',
+        name: 'HajimiResetFightWorldExploreThreeKingdoms',
+        component: () => import('../pages/Planet/planetVue/threeKingdoms.vue')
       },
       {
         path: 'fight/ground',
@@ -57,7 +62,12 @@ const routes = [
         path: 'hometown/monster',
         name: 'HajimiResetHometownMonster',
         component: () => import('../pages/Hometown/MonsterShow.vue')
-      }
+      },
+      {
+        path: 'shop',
+        name: 'HajimiResetShop',
+        component: () => import('../pages/Shop.vue')
+      },
     ]
   }
 ]

@@ -1,9 +1,9 @@
-import saier from "./saier.js"
+import planet from "./planet.js"
 export default{
     getGroundByName(name){
         let ground = ""
-        if(saier.getGroundByName(name)){
-            ground = saier.getGroundByName(name)
+        if(planet.getGroundByName(name)){
+            ground = planet.getGroundByName(name)
         }
         return ground
     },//根据名称获取地面类型
@@ -33,13 +33,44 @@ export default{
                     ]
                 },
             ]
+        }else if(name==="三国"){
+            return[
+                {
+                    label: "群雄并起",
+                    value: "群雄并起",
+                    sceneList:[
+                        {
+                            label: "苍天已死，黄天当立",
+                            value: "threeKingdoms_taipingdao",
+                        },
+                        {
+                            label: "桃园结义",
+                            value: "threeKingdoms_taoyuanjieyi",
+                        },
+                        // {
+                        //     label: "官渡之战",
+                        //     value: "threeKingdoms_guandu",
+                        // }
+                    ]
+                },
+                // {
+                //     label: "天下三分",
+                //     value: "天下三分",
+                //     sceneList:[
+                //         {
+                //             label: "赤壁之战",
+                //             value: "threeKingdoms_chibi",
+                //         }
+                //     ]
+                // },
+            ]
         }
         return []
     },//获取地面类型列表
     getWildMonsterMesByName(name){
         let result = {}
-        if(saier.getWildMonsterMesByName(name)){
-            result = saier.getWildMonsterMesByName(name)
+        if(planet.getWildMonsterMesByName(name)){
+            result = planet.getWildMonsterMesByName(name)
         }
         return result
     },//根据名称获取野外怪物信息

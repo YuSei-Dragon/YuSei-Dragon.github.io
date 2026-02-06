@@ -340,7 +340,7 @@ export default {
         store.commit("hajimiReset/setTipList",["对方回合开始"])
         return this.botTurn(allMes,store)
     },//开始游戏
-    async botTurn(allMes,store){
+    async botTurn(allMes,store,callback){
         allMes.fightMes.whosTurn = "bot"
         if(allMes.fightMes.turn>1){
             allMes.fightMes.botMes.power+=2
@@ -361,7 +361,7 @@ export default {
         //重置动画
         //开始操作
         await this.waitToDo(2000,async()=>{
-            allMes = await this.botMove(allMes,store)
+            allMes = await this.botMove(allMes,store,callback)
         })
         //结束回合
         await this.waitToDo(2000,()=>{
@@ -440,7 +440,7 @@ export default {
         })
         return allMes
     },//bot回合
-    async botMove(allMes,store){
+    async botMove(allMes,store,callback){
         //bot的灵力使用优先级
         //场上有精灵>精灵出招>场上有多只精灵
         //如果场上精灵已经出招，就会尝试再召唤一只
@@ -531,6 +531,7 @@ export default {
                 allMes = skillApi.useSkill(useSkill.name,"myMes",monster,aimMonsterIndex,allMes,store)
                 monster.haveUseSkill = true
                 //记录精灵已经使用了技能
+                callback(monster.name,useSkill.name)
                 await this.waitToDo(2000)
                 // 等待2秒再处理下一个精灵
             }
@@ -555,6 +556,7 @@ export default {
                 console.log("bot召唤一只",randomMonster.data.name)
                 this.callMonster("botMes",randomMonster.index,allMes,store)
                 //召唤精灵
+                callback("","召唤了"+randomMonster.data.name+"!")
             }else{
                 console.log("bot没有未上场的精灵可以召唤")
             }

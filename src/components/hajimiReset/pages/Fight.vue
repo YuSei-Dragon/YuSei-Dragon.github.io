@@ -65,6 +65,9 @@ const closeMonsterList = () => {
 const choiceTypeUrl = ref("")
 const selectFight = (fightPageOne) => {
     //选择战斗挑战
+    if(fightPageOne.name === "限级爬塔"){
+        return store.commit("hajimiReset/setTipList",["限级爬塔暂未开放"])
+    }
     choiceTypeUrl.value = fightPageOne.url
     store.commit("hajimiReset/setTipList",["请确认出战精灵"])
     //初始化allMes

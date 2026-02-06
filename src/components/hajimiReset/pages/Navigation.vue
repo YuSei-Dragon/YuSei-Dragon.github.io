@@ -18,7 +18,7 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const pending = ref(false)
-const titleList = ref(["战斗","设置","家园","测试"])
+const titleList = ref(["战斗","设置","家园","商店"])
 
 const allMes = ref({})
 watch(() => store.state.hajimiReset.allMes, (newVal, oldVal) => {
@@ -71,6 +71,9 @@ const setMes = ref(()=>{
         reader.onload = () => {
             console.log("读取文件信息加载完毕")
             const content = reader.result
+            allMes.value = JSON.parse(content)
+            store.commit("hajimiReset/setAllMes",allMes.value)
+            store.commit("hajimiReset/setTipList",["导入成功"])
             initMes(JSON.parse(content))
         }
     }
@@ -98,10 +101,8 @@ const changePage = (title) => {
     // 如果有设置页面
     // router.push('/hajimiReset/settings')
     console.log('设置页面尚未实现')
-  } else if (title === '测试') {
-    // 如果有测试页面
-    // router.push('/hajimiReset/test')
-    console.log('测试页面尚未实现')
+  } else if (title === '商店') {
+    router.push('/hajimiReset/shop')
   }
 }
 const loginTest = () =>{

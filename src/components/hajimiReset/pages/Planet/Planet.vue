@@ -13,7 +13,7 @@ import {
 } from 'vue'
 import {useStore} from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
-import saierApi from './saier.js'
+import planetApi from './planet.js'
 const router = useRouter()
 const route = useRoute()
 const store = useStore()
@@ -127,6 +127,7 @@ const moveMonster = ()=>{
 const emit = defineEmits(['clickMonster'])
 const clickMonster = (monster)=>{
     //点击精灵，进入野生精灵对战
+    console.log(monster)
     allMes.value.wildMonster = monster
     store.commit("hajimiReset/setAllMes",allMes.value)
     router.push(`/hajimiReset/fight/ground?type=wildBattle&ground=${selectedScene.value}`)
@@ -153,7 +154,7 @@ const moving = ref(false)
 const changeGround = (val)=>{
     // console.log(val)
     moving.value = false
-    monsterShowList.value = saierApi.getMonsterListByGround(val)
+    monsterShowList.value = planetApi.getMonsterListByGround(val)
     console.log(monsterShowList.value)
     sceneList.value = props.groundList.find(item=>item.value===val).sceneList
     if(sceneList.value.length>0){
@@ -170,7 +171,7 @@ const changeScene = (val)=>{
     moving.value = false
     console.log(val)
     selectedScene.value = val
-    monsterShowList.value = saierApi.getMonsterListByGround(selectedGround.value,val)
+    monsterShowList.value = planetApi.getMonsterListByGround(selectedGround.value,val)
     console.log(monsterShowList.value)
     setTimeout(()=>{
         moving.value = true

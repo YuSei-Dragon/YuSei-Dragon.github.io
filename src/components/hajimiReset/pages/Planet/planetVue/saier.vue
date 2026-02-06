@@ -12,10 +12,9 @@ import {
 } from 'vue'
 import {useStore} from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
-import saierApi from './saier.js'
-import planetApi from './planetApi.js'
+import planetApi from '../planetApi.js'
 const Planet = defineAsyncComponent(() =>
-  import("./Planet.vue")
+  import("../Planet.vue")
 )
 const router = useRouter()
 const route = useRoute()
@@ -67,7 +66,7 @@ const groundList = ref(planetApi.getGroundList("赛尔号"))
             height: 30px;
             border-radius: 4px;
             position: absolute;
-            background: url("../../img/baimei.gif") no-repeat;
+            background: url("../../../img/baimei.gif") no-repeat;
             background-size: 100% 100%;
             transition: 2s;
             cursor: pointer;

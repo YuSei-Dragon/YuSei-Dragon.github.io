@@ -290,6 +290,7 @@ export default {
                                 return allMes
                             }else{
                                 let lifeChange = this.lifeChange(user,item,skill)
+                                console.log("最终结算伤害",lifeChange)
                                 if(allMes.fightMes.ground===item.ground&&item.ground!=="普通"){
                                     // 地面类型匹配
                                     lifeChange = Number(lifeChange*1.5.toFixed(0))
@@ -645,23 +646,25 @@ export default {
             if(skill?.atkAdd&&skill.atkAdd?.speedAdd){
                 skillValue += skill.atkAdd.speedAdd * atk.speedLv
             }//处理速度加成
-            damage = -(skillValue/2) * ( (100+(atkNum-defNum)/100)/100)
+            damage = -(skillValue/2) * ( (100+(atkNum-defNum))/100)
+            console.log(skillValue,damage)
         }
         if(skill.type==="atkMagic"){
             const skillValue = skill.atkMagic
-            damage = -(skillValue/2) * ( (100+(atkMagicNum-defMagicNum)/100)/100)
+            damage = -(skillValue/2) * ( (100+(atkMagicNum-defMagicNum))/100)
         }
         if(atk.attribute===skill.attribute){
             damage *= 1.5
         }//同属性伤害*1.5
         damage = this.calculateAttribute(atk,def,damage)
-        if(skill.attribute === def.attribute){
+        if(skill.attribute === def.attribute&&skill.attribute!=="普通"){
+            console.log("同属性伤害减半")
             damage *= 0.5
         }//同属性招式伤害减半
         if(atk?.magnification&&atk.magnification>0){
             damage *= 2
         }//翻倍伤害结算
-        console.log(atk.name,def.name,skill.name,Number(damage.toFixed(0)))
+        console.log(atk.name,atk,def.name,def,skill.name,Number(damage.toFixed(0)))
         return Number(damage.toFixed(0))
     },//伤害计算
     calculateAttribute(atk,def,damage){
@@ -750,4 +753,21 @@ export default {
         })
         return skillList
     },//根据名字和等级获取技能列表
+    getSkillListByLv(name,level){
+        let allSkillList = [
+            ...saierSkill.getSkillList()
+        ]
+        let skillList = []
+        allSkillList.forEach(skill=>{
+            if(skill.name===name){
+                skill.skillList.forEach(item=>{
+                    if(item.level===level){
+                        // console.log(skill,name,level)
+                        skillList.push(item.name)
+                    }
+                })
+            }
+        })
+        return skillList
+    },//根据名字和具体某一等级获取技能列表
 }

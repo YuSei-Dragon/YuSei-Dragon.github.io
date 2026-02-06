@@ -13,6 +13,7 @@ import {
 } from 'vue'
 import {useStore} from 'vuex'
 import { useRouter } from 'vue-router'
+import wildMonsterApi from './wildMonster.js'
 
 const router = useRouter()
 const store = useStore()
@@ -79,7 +80,14 @@ const getMapPosition = (x,y)=>{
 const handleClickStart = (name)=>{
     store.commit("hajimiReset/setAllMes", allMes.value)
     //fight/worldExplore/saier
-    router.push('/hajimiReset/fight/worldExplore/saier')
+    if(name==="赛尔号"){
+        router.push('/hajimiReset/fight/worldExplore/saier')
+    }else if(name==="三国"){
+        router.push('/hajimiReset/fight/worldExplore/threeKingdoms')
+    }else{
+        store.commit("hajimiReset/setTipList",["该区域未开放"])
+    }
+    
 }// 点击地图事件
 const changePage = (title) => {
     router.push('/hajimiReset/fight')
@@ -95,8 +103,8 @@ const changePage = (title) => {
         @mouseup="handleMouseUp",
         @mouseleave="handleMouseLeave")
         .world-explore-map-relative
-            .world-explore-map-saier(:style="getMapPosition(500,300)" @click="handleClickStart('赛尔号')")
-                .world-explore-map-name 赛尔号
+            .world-explore-map-saier(v-for="planet in wildMonsterApi.getAllPlanetMes()" :style="getMapPosition(planet.position.x,planet.position.y)" @click="handleClickStart(planet.name)")
+                .world-explore-map-name {{planet.name}}
 </template>
 <style scoped lang="scss">
 .world-explore-block{

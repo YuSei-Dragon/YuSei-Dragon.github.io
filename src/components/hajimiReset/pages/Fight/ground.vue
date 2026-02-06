@@ -211,6 +211,13 @@ const getMonsterOnHandStyle = (index)=>{
 }//控制选中手上精灵的样式
 const callMonster = ()=>{
     allMes.value = api.callMonster("myMes",monsterChoicedIndex.value,allMes.value,store)
+    showMySkillTip.value = true
+    mySkillTipBottom.value = "召唤了：" + allMes.value.fightMes.myMes.monsterList[monsterChoicedIndex.value].name + " !"
+    setTimeout(() => {
+        showMySkillTip.value = false
+        mySkillTipTop.value = ""
+        mySkillTipBottom.value = ""
+    }, 2000)
 }
 const isShowDialog = ref(false)
 // 添加一个Promise相关的ref来处理异步等待
@@ -252,6 +259,15 @@ const selectTarget = (target) => {
 const executeSkill = (name, target=null)=>{
     allMes.value = skillApi.useSkill(name,"botMes",selectedMonster.value, target, allMes.value, store)
     console.log(allMes.value)
+    showMySkillTip.value = true
+    //展示技能发动提示
+    mySkillTipTop.value = selectedMonster.value.name
+    mySkillTipBottom.value = "使用了：" + name + " !"
+    setTimeout(() => {
+        showMySkillTip.value = false
+        mySkillTipTop.value = ""
+        mySkillTipBottom.value = ""
+    }, 2000);
     if(allMes.value.fightMes.result!==""){
         store.commit("hajimiReset/setTipList",
         [allMes.value.fightMes.result==="win"?"你赢了":"你输了"])
@@ -262,7 +278,17 @@ const executeSkill = (name, target=null)=>{
 const useSituation = ref([])
 const endTrun = ()=>{
     api.endTrun(allMes.value,store)
-    api.botTurn(allMes.value,store)
+    api.botTurn(allMes.value,store,(name,skill)=>{
+        showBotSkillTip.value = true
+        //展示技能发动提示
+        botSkillTipTop.value = name
+        botSkillTipBottom.value = "使用了：" + skill + " !"
+        setTimeout(() => {
+            showBotSkillTip.value = false
+            botSkillTipTop.value = ""
+            botSkillTipBottom.value = ""
+        }, 2000);
+    })
 }
 const getLvColor = (lv)=>{
     if(lv>0){
@@ -324,6 +350,12 @@ const getMagnificationStyle = (monster)=>{
         return "background-color:#ab1717;border-radius:4px;"
     }return ""
 }
+const showMySkillTip = ref(false)
+const showBotSkillTip = ref(false)
+const mySkillTipTop = ref("")
+const mySkillTipBottom = ref("")
+const botSkillTipTop = ref("")
+const botSkillTipBottom = ref("")
 </script>
 
 <template lang="pug">
@@ -336,12 +368,18 @@ const getMagnificationStyle = (monster)=>{
             .fight-ground-header-life-number {{allMes?.fightMes?.myMes?.life||"???"}}
             .fight-ground-header-power
                 .fight-ground-header-power-point(v-for="i in (allMes?.fightMes?.myMes?.power || 0)" v-show="i>0")
+            .fight-ground-header-skill-use-tip(v-if="showMySkillTip")
+                .fight-ground-header-skill-use-tip-text {{mySkillTipTop}}
+                .fight-ground-header-skill-use-tip-text {{mySkillTipBottom}}
         .fight-ground-header-head
         .fight-ground-header-life
             .fight-ground-header-life-line(:style="getLifeStyle('bot')")
             .fight-ground-header-life-number {{allMes?.fightMes?.botMes?.life||"???"}}
             .fight-ground-header-power
                 .fight-ground-header-power-point(v-for="i in (allMes?.fightMes?.botMes?.power || 0)" v-show="i>0")
+            .fight-ground-header-skill-use-tip(v-if="showBotSkillTip")
+                .fight-ground-header-skill-use-tip-text {{botSkillTipTop}}
+                .fight-ground-header-skill-use-tip-text {{botSkillTipBottom}}
     .fight-ground-turn 回合{{allMes?.fightMes?.turn}}
     .fight-ground-whosturn {{allMes?.fightMes?.whosTurn==="my"?"我":"对方"}}回合
     .fight-ground-catch-block(v-if="isShowAnimation" )
@@ -413,7 +451,7 @@ const getMagnificationStyle = (monster)=>{
                             .fight-ground-monster-ready-list-for-level {{monster.level}}
                     template(#default)
                         .fight-ground-monster-ready-list-for-detail(
-                            style="width:150px;padding:0px;margin:0px;max-height:240px;overflow-y: auto;"
+                            style="width:150px;padding:0px;margin:0px;max-height:240px;overflow-y: auto;position: relative;"
                         )
                             .fight-ground-monster-ready-list-for-detail-name(
                                 style="font-size: 12px;color: #fff;"
@@ -421,6 +459,9 @@ const getMagnificationStyle = (monster)=>{
                             .fight-ground-monster-ready-list-for-detail-level(
                                 style="font-size: 10px;color: #fff;"
                             ) lv:{{monster.level}}
+                            .fight-ground-monster-ready-list-for-detail-attribute(
+                               :style="getMonsterAttributeStyle(monster)"
+                            )
                             .fight-ground-monster-ready-list-for-detail-skill(v-for="skill in monster.skillList"
                             style="width:120px;margin-top:4px;")
                                 .fight-ground-monster-ready-list-for-detail-skill-name(
@@ -531,6 +572,14 @@ const getMagnificationStyle = (monster)=>{
                     background-color: #00ffe9;
                     clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
                 }
+            }
+            .fight-ground-header-skill-use-tip{
+                position: absolute;
+                top: 40px;
+                left: 0px;
+                color: #fff;
+                font-size: 12px;
+                transition: 0.3s;
             }
         }
     }
@@ -676,7 +725,7 @@ const getMagnificationStyle = (monster)=>{
                 top: 0px;
                 left: 0px;
                 width: 50px;
-                height: 20px;
+                height: 50px;
             }
         }
     }
@@ -708,30 +757,30 @@ const getMagnificationStyle = (monster)=>{
                 height: 100%;
                 position: relative;
                     .fight-ground-monster-ready-list-for{
-                    width: 38px;
-                    margin: 10px 5px;
-                    height: 58px;
-                    border: 1px solid #ee33ff;
-                    float: left;
-                    position: relative;
-                    border-radius: 4px;
-                    background-color: #333;
-                    .fight-ground-monster-ready-list-for-name{
-                        font-size: 8px;
-                        color: #fff;
-                        width: 10px;
-                        height: 100%;
-                        padding-left: 4px;
-                        cursor: pointer;
+                        width: 38px;
+                        margin: 10px 5px;
+                        height: 58px;
+                        border: 1px solid #ee33ff;
+                        float: left;
+                        position: relative;
+                        border-radius: 4px;
+                        background-color: #333;
+                        .fight-ground-monster-ready-list-for-name{
+                            font-size: 8px;
+                            color: #fff;
+                            width: 10px;
+                            height: 100%;
+                            padding-left: 4px;
+                            cursor: pointer;
+                        }
+                        .fight-ground-monster-ready-list-for-level{
+                            font-size: 8px;
+                            color: #fff;
+                            position: absolute;
+                            top: 0px;
+                            right: 4px;
+                        }
                     }
-                    .fight-ground-monster-ready-list-for-level{
-                        font-size: 8px;
-                        color: #fff;
-                        position: absolute;
-                        top: 0px;
-                        right: 4px;
-                    }
-                }
             }
             .fight-ground-item-block{
                 width: 100%;
@@ -868,5 +917,12 @@ const getMagnificationStyle = (monster)=>{
         left: 50%;
         transform: translateX(-50%);
     }
+}
+.fight-ground-monster-ready-list-for-detail-attribute{
+    position:absolute;
+    top:0px;
+    right:20px;
+    height:16px;
+    width:16px;
 }
 </style>

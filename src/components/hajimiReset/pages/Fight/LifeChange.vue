@@ -55,13 +55,13 @@ watch(() => props.life, (newVal, oldVal) => {
     width: 100%;
     height: 100%;
     position: relative;
-    font-size: 10px;
+    font-size: 14px;
     text-align: center;
     font-weight: bold;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-    background-color: #0000007b;
-    line-height: 20px;
+    background-color: #000000cb;
+    line-height: 40px;
     // text-shadow: #666 1px 0 0, #666 0 1px 0, #666 -1px 0 0, #666 0 -1px 0;
     .life-change-num-plus{
         color: #33e35d;
