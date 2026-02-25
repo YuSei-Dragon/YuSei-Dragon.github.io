@@ -24,12 +24,13 @@ onMounted(() => {
 })
 const experienceText = ref(0)
 const upgradeList = ref([])
+const goldNum = ref(0)
 const init = () => {
     console.log("allMes", allMes.value)
     if(allMes.value?.fightMes){
         //结算经验
         console.log("allMes", allMes.value)
-        const experience = 100* runeApi.calculateExperience(allMes.value)
+        const experience = runeApi.calculateExperience(allMes.value)
         console.log("experience", experience)
         let updataMonsterLvRes = runeApi.updateMonsterLv(allMes.value,experience)
         allMes.value = updataMonsterLvRes.allMes
@@ -50,6 +51,12 @@ const init = () => {
         }else{
             //战斗失败
         }
+        allMes.value.fightMes.botMes.monsterList.forEach(item=>{
+            if(item.isDead&&item.isDead===true){
+                goldNum.value += item.level*50
+            }
+        })
+        allMes.value.playerMes.money += goldNum.value
         //其实每次战斗开始都会重置，这里是为了避免在外面使用数据的时候出现异常情况不好排查
     }else{
         console.log("战斗结果不存在")
@@ -101,6 +108,7 @@ const checkCanEvolution = (name) => {
    .result-tips(v-if="allMes.fightMes.result==='win'" )
         div(v-for="monster in allMes.fightMes.botMes.monsterList" :key="monster.name") 你击败了 {{monster.name}}!
    .result-tips(v-if="allMes.fightMes.result==='lose'") 你被击败了!
+   .result-tips 获取金币：{{goldNum}}
    .result-tip-for-block
         .result-tip-for(v-for="item in allMes.fightMes.myMes.monsterList" :key="item.name")
             .result-tips(v-if="item.onGround") {{item.name}} 获得 {{experienceText}} 经验

@@ -10,7 +10,7 @@ export default {
         if(monsterMes.isWild===false){
             store.commit("hajimiReset/setTipList",["不能捕捉非野生精灵！"])
             return {allMes}
-        }else if(monsterMes?.isBoss&&monsterMes.isBoss===true){
+        }else if((monsterMes?.isBoss&&monsterMes.isBoss===true)||(!allMes.wildMonster?.name)){
             store.commit("hajimiReset/setTipList",["不能捕捉boss精灵！"])
             return {allMes}
         }else{
@@ -107,7 +107,7 @@ export default {
     checkBossMonster(allMes){
         //检查是否是野生boss
         console.log(allMes.wildMonster)
-        if(allMes.wildMonster.isBoss&&allMes.wildMonster.isBoss===true){
+        if(allMes.wildMonster?.isBoss&&allMes.wildMonster.isBoss===true){
             //是boss
             let name = allMes.wildMonster.name
             let bossName = planetJs.getBossEssence(name)

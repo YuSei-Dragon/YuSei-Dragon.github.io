@@ -8,7 +8,21 @@ export default {
                     level:1
                 }
             },
-            wildMonster:{}
+            wildMonster:{},
+            planetMes:{
+                saier:{},
+                threeKingdoms:{
+                    progressList:[
+                        {name:"魏",progress:0,color:"#240d98"},
+                        {name:"蜀",progress:0,color:"#a41313"},
+                        {name:"吴",progress:0,color:"#367408"},
+                    ]
+                }
+            },
+            campaignMes:{
+                myMonsterList:[],
+                botMonsterList:[],
+            }
         }
     },
     getTestSetting(){
@@ -352,7 +366,7 @@ export default {
                             "speed": 0
                         },
                         "attribute": "金",
-                        "level": 16,
+                        "level": 1,
                         "experience": 0,//当前经验
                         "skillList": [
                             "撞击",
@@ -380,7 +394,21 @@ export default {
                     level:1
                 }
             },
-            wildMonster:{}
+            wildMonster:{},
+            planetMes:{
+                saier:{},
+                threeKingdoms:{
+                    progressList:[
+                        {name:"魏",progress:10,color:"#240d98"},
+                        {name:"蜀",progress:30,color:"#a41313"},
+                        {name:"吴",progress:60,color:"#367408"},
+                    ]
+                }
+            },
+            campaignMes:{
+                myMonsterList:[],
+                botMonsterList:[],
+            }
         }
     },
     getBasicPlayerMes(name){
@@ -594,6 +622,16 @@ export default {
 // 所以可以自己开低代价技能顶掉
 //但是封锁和必中等非持续效果可以叠加
 
+//三国增加好感度系统，名将需要完成对应战役刷好感
+//不同战役里面可以选不同势力的武将和他并肩作战，无论输赢都会增加和这个武将的好感度
+//好感满了会加入招募池子，会限制，自适应调整参战精灵等级
+//要花金币挑战，赢了就直接获取对应好感度等级名将（都有独立技能和通用技能)
+//杂鱼可以直接抓。
+//挑战不同的战役选择不同的阵容会导致三势力国力条增减
+//赢下三国战争将会直接直接获得胜利国的所有名将初始形态（好感度决定对应等级）
+//剩余名将需要在英灵殿里面花钱挑战，获取1级初始形态
+//不影响三国英灵殿里面的挑战（可重复挑战）
+
 //技能消耗灵力的默认
 //0~90威力 1
 //90~120 2
@@ -601,15 +639,26 @@ export default {
 
 
 //基本颜色
+//#fff900 浅黄色
 //#b5f830 浅黄绿色
 //#33e35d 浅绿色
+//#1db040 绿色
+//#367408 暗绿色
 //#ee33ff 粉紫色
+//#ff9d9d 浅红色
 //#ff4646 红色
 //#a10909 深红色
+//#a41313 暗红色
 //#33a6ff 浅蓝色
+//#240d98 深紫罗兰
+//#7e30c9 紫色
+//#a6a1e6 浅紫色
 
 //基本背景色 
 //rgba(255, 255, 255, 0.3) 悬浮窗背景
+
+//武将/文人 基本通用技能设计
+
 
 //0105 已完成 处理效果技能的方法
 //0106 已完成 控制技能消耗灵力
@@ -650,3 +699,13 @@ export default {
 //0204 已完成 miss特效
 //0204 已完成 增加三国星球 整理通用星球方法
 //0206 已完成 增加boss挑战成功掉落boss初始形态
+//0209 已完成 增加可学习技能一览
+//0209 已完成 三国专属副本流程实验页搭建
+//0210 已完成 战役模式战场数据处理
+//0211 已完成 处理动态等级锁定机制
+//0212 已完成 bot的team类型技能使用
+//0212 已完成 增加金币获取来源
+//0212 已完成 检查为什么三国技能不生效
+//0212 已完成 设置每个boss的单独出招逻辑
+//0213 已完成 正确的结束被击败的处理
+//0213 已完成 正确的结束胜利的处理

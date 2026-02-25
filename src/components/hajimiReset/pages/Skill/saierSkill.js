@@ -798,11 +798,11 @@ let skillList = [
         cost: 2,
         effect:{
             my:[{"type":"defMagic","value":3},{"type":"delay",list:[
-                {"type":"defMagic","value":-3,turn:6}
+                {"type":"defMagic","value":-3,turn:3}
             ]}],
             bot:[]
         },
-        text:"5回合内特防得到巨幅提升，但是5回合后特防会巨幅下降",
+        text:"3回合内特防得到巨幅提升，但是3回合后特防会巨幅下降",
         attribute:"金",
     },
     {
@@ -819,7 +819,7 @@ let skillList = [
         type:"atkMagic",
         atkMagic:"120",
         aim:"single",
-        cost: 1,
+        cost: 2,
         effect:{
             my:[],
             bot:[{"type":"lock","value":1,"percent":"5"}]
@@ -1002,13 +1002,13 @@ let skillList = [
         effect:{
             my:[{"type":"defMagic","value":3},{"type":"def","value":3},
                 {"type":"delay",list:[
-                    {"type":"defMagic","value":-3,turn:3},
-                    {"type":"def","value":-3,turn:3}
+                    {"type":"defMagic","value":-3,turn:2},
+                    {"type":"def","value":-3,turn:2}
                 ]}
             ],
             bot:[]
         },
-        text:"两回合内大幅增加双抗",
+        text:"自身2回合内大幅增加双抗，2回合后大幅降低双抗",
         attribute:"水",
     },
     {

@@ -168,7 +168,7 @@ export default {
         let fightList = []
         console.log(list)
         list.forEach(monster=>{
-            // console.log(monster)
+            console.log(monster)
             fightList.push({
                 ...this.getMonsterFightMes(monster),
                 onGround:false,
@@ -273,35 +273,39 @@ export default {
                 monster.magnification--
             }//处理伤害翻倍回合数
             if(monster.delay.length>0){
+                let delay = []
                 monster.delay.map(item=>{
                     if(item.turn>0){
                         item.turn--
                         if(item.turn <=0){
-                            monster[item.type] += this.preventExceed(item.value,5,-5)
+                            monster = this.delayEffect(monster,item)
+                        }else{
+                            delay.push(item)
                         }
                     }
                 })
+                monster.delay = delay
             }//处理延迟效果
             if(monster.hurtTurn>0){
                 monster.hurtTurn--
                 monster.nowLife -= monster.hurtValue
-                if(monster.nowLife<=0){
-                    monster.nowLife = 0
-                    store.commit("hajimiReset/setTipList",[monster.name + "倒下了！"])
-                    monster.onGround = false
-                    monster.isDead = true
-                    if(!skillApi.haveMoreMonster(allMes.fightMes.myMes.monsterList)) {
-                        // 所有精灵都死亡了
-                        store.commit("hajimiReset/setTipList",["游戏结束"])
-                        allMes.fightMes.result = "lose"
-                    }
-                }
             }
             if(monster.healTurn>0){
                 monster.healTurn--
                 monster.nowLife += monster.healValue
                 if(monster.nowLife>monster.life){
                     monster.nowLife = monster.life
+                }
+            }
+            if(monster.nowLife<=0){
+                monster.nowLife = 0
+                store.commit("hajimiReset/setTipList",[monster.name + "倒下了！"])
+                monster.onGround = false
+                monster.isDead = true
+                if(!skillApi.haveMoreMonster(allMes.fightMes.myMes.monsterList)) {
+                    // 所有精灵都死亡了
+                    store.commit("hajimiReset/setTipList",["游戏结束"])
+                    allMes.fightMes.result = "lose"
                 }
             }
         })//处理封印状态
@@ -340,7 +344,7 @@ export default {
         store.commit("hajimiReset/setTipList",["对方回合开始"])
         return this.botTurn(allMes,store)
     },//开始游戏
-    async botTurn(allMes,store,callback){
+    async botTurn(allMes,store,callback,router){
         allMes.fightMes.whosTurn = "bot"
         if(allMes.fightMes.turn>1){
             allMes.fightMes.botMes.power+=2
@@ -348,6 +352,12 @@ export default {
         if(allMes.fightMes.turn>=11){
             allMes.fightMes.botMes.power++
         }//回合数超过10 灵力恢复速度+1
+        if(allMes.fightMes.turn>=21){
+            allMes.fightMes.botMes.power++
+        }//回合数超过20 灵力恢复速度+1
+        if(allMes.fightMes.turn>=31){
+            allMes.fightMes.botMes.power++
+        }//回合数超过30 灵力恢复速度+1
         if(allMes.fightMes.botMes.power > 8){
             allMes.fightMes.botMes.power = 8
         }
@@ -360,9 +370,12 @@ export default {
         })//重置场上精灵动画
         //重置动画
         //开始操作
-        await this.waitToDo(2000,async()=>{
-            allMes = await this.botMove(allMes,store,callback)
-        })
+        if(allMes.fightMes.turn>1){
+            await this.waitToDo(2000,async()=>{
+                allMes = await this.botMove(allMes,store,callback,router)
+                
+            }) 
+        }//如果不是第一回合，直接开始动
         //结束回合
         await this.waitToDo(2000,()=>{
             allMes.fightMes.botMes.monsterList.map(monster=>{
@@ -379,35 +392,40 @@ export default {
                     monster.clean--
                 }//处理无视能力降低效果回合数
                 if(monster.delay.length>0){
+                    let delay = []
                     monster.delay.map(item=>{
+                        
                         if(item.turn>0){
                             item.turn--
                             if(item.turn <=0){
-                                monster[item.type] += this.preventExceed(item.value,5,-5)
+                            monster = this.delayEffect(monster,item)
+                            }else{
+                                delay.push(item)
                             }
                         }
                     })
+                    monster.delay = delay
                 }//处理延迟效果
                 if(monster.hurtTurn>0){
                     monster.hurtTurn--
                     monster.nowLife -= monster.hurtValue
-                    if(monster.nowLife<=0){
-                        monster.nowLife = 0
-                        store.commit("hajimiReset/setTipList",[monster.name + "倒下了！"])
-                        monster.onGround = false
-                        monster.isDead = true
-                        if(!skillApi.haveMoreMonster(allMes.fightMes.botMes.monsterList)) {
-                            // 所有精灵都死亡了
-                            store.commit("hajimiReset/setTipList",["游戏结束"])
-                            allMes.fightMes.result = "win"
-                        }
-                    }
                 }
                 if(monster.healTurn>0){
                     monster.healTurn--
                     monster.nowLife += monster.healValue
                     if(monster.nowLife>monster.life){
                         monster.nowLife = monster.life
+                    }
+                }
+                if(monster.nowLife<=0){
+                    monster.nowLife = 0
+                    store.commit("hajimiReset/setTipList",[monster.name + "倒下了！"])
+                    monster.onGround = false
+                    monster.isDead = true
+                    if(!skillApi.haveMoreMonster(allMes.fightMes.botMes.monsterList)) {
+                        // 所有精灵都死亡了
+                        // store.commit("hajimiReset/setTipList",["游戏结束"])
+                        allMes.fightMes.result = "win"
                     }
                 }
             })//处理封印状态
@@ -422,7 +440,7 @@ export default {
                         monster.isDead = true
                         if(!skillApi.haveMoreMonster(allMes.fightMes.myMes.monsterList)) {
                             // 所有精灵都死亡了
-                            store.commit("hajimiReset/setTipList",["游戏结束"])
+                            // store.commit("hajimiReset/setTipList",["游戏结束"])
                             allMes.fightMes.result = "lose"
                         }
                     }
@@ -435,12 +453,22 @@ export default {
                     }
                 }
             })//处理封印状态
+            
+            if(allMes.fightMes.myMes.monsterList.filter(monster=>monster.isDead===false).length<=0){
+                allMes.fightMes.result = "lose"
+                store.commit("hajimiReset/setTipList",["胜负已分！"])
+                store.commit("hajimiReset/setTipList",
+                [allMes.fightMes.result==="win"?"你赢了":"你输了"])
+                store.commit("hajimiReset/setAllMes",allMes)
+                router.push('/hajimiReset/fight/result')
+                return allMes
+            }
             store.commit("hajimiReset/setTipList",["我的回合开始"])
             allMes = this.myTurn(allMes,store)
         })
         return allMes
     },//bot回合
-    async botMove(allMes,store,callback){
+    async botMove(allMes,store,callback,router){
         //bot的灵力使用优先级
         //场上有精灵>精灵出招>场上有多只精灵
         //如果场上精灵已经出招，就会尝试再召唤一只
@@ -449,7 +477,9 @@ export default {
             if(monster.onGround&&!monster.haveUseSkill){
                 monsterOnGroundList.push({
                     data:monster,
-                    index:index})
+                    index:index,
+                    level:monster.level
+                })
             }
         })//获取场上没有开过技能的精灵
         //优先让等级高的精灵使用技能
@@ -457,6 +487,8 @@ export default {
             return b.data.level - a.data.level
         })//按等级从高到低排序
         //让所有场上的精灵都尝试开技能
+        console.log(monsterOnGroundList)
+        
         for(const monsterOne of monsterOnGroundList) {
             if(allMes.fightMes.botMes.power <= 0) {
                 break // 灵力不足，停止行动
@@ -494,6 +526,7 @@ export default {
                         }//找出血量最少的
                     }
                 })//获取目标精灵
+                
                 let skillIndex
                 if(aimMonsterIndex === null){
                     //如果场上没有精灵，直接对玩家使用招数
@@ -519,24 +552,46 @@ export default {
                         }
                     }))
                     skillList = canUseSkillList
-                    skillIndex = Math.floor(Math.random()*skillList.length)
+                    skillIndex = skillApi.getLogicUseSkillByName(skillList,monster,allMes,store,router)
+                    // skillIndex = Math.floor(Math.random()*skillList.length)
                     //随机出一招
                 }else{
-                   skillIndex = Math.floor(Math.random()*monster.skillList.length)
+                    skillIndex = skillApi.getLogicUseSkillByName(skillList,monster,allMes,store,router)
+                   //skillIndex = Math.floor(Math.random()*skillList.length)
                    //如果有精灵，随便出一招
                 }
                 useSkill = skillList[skillIndex]
+                console.log(skillList,skillIndex)
                 console.log(useSkill,skillList,monster.skillList)
-                
-                allMes = skillApi.useSkill(useSkill.name,"myMes",monster,aimMonsterIndex,allMes,store)
+                if(useSkill.type==="team"){
+                    let minLife = 9999
+                    allMes.fightMes.botMes.monsterList.filter((monster,index)=>{
+                        if(monster.onGround===true){
+                            if(monster.nowLife<minLife){
+                                minLife = monster.nowLife
+                                aimMonsterIndex = index
+                            }//找出血量最少的
+                        }
+                    })//获取目标精灵
+                }
+                allMes = await skillApi.useSkill(useSkill.name,"myMes",monster,aimMonsterIndex,allMes,store)
                 monster.haveUseSkill = true
                 //记录精灵已经使用了技能
                 callback(monster.name,useSkill.name)
+                if(allMes.fightMes.result!==""){
+                    break//胜负已分，退出循环
+                }
                 await this.waitToDo(2000)
                 // 等待2秒再处理下一个精灵
             }
         }//让所有场上的精灵都尝试开技能
         // console.log("处理场上精灵发动技能完毕",allMes)
+        if(allMes.fightMes.result!==""){
+            // return allMes//胜负已分，退出循环
+            // return allMes//胜负已分，退出循环
+            store.commit("hajimiReset/setAllMes",allMes)
+            router.push('/hajimiReset/fight/result')
+        }
         if(allMes.fightMes.botMes.power>=2){
             //如果还有剩余的灵力，再召唤一只
             console.log("bot有多的灵力，尝试再召唤一只",allMes)
@@ -571,6 +626,12 @@ export default {
         if(allMes.fightMes.turn>=11){
             allMes.fightMes.myMes.power++
         }//回合数超过10 灵力恢复速度+1
+        if(allMes.fightMes.turn>=21){
+            allMes.fightMes.myMes.power++
+        }//回合数超过20 灵力恢复速度+1
+        if(allMes.fightMes.turn>=31){
+            allMes.fightMes.myMes.power++
+        }//回合数超过30 灵力恢复速度+1
         if(allMes.fightMes.myMes.power > 8){
             allMes.fightMes.myMes.power = 8
         }
@@ -584,6 +645,34 @@ export default {
         //结束回合
         return allMes
     },//我的回合
+    delayEffect(monster,item){
+        if(item.type==="atk"){
+            monster.atkLv += item.value
+        }
+        if(item.type === "atkMagic"){
+            monster.atkMagicLv += item.value
+        }
+        if(item.type==="def"){
+            monster.defLv += item.value
+        }
+        if(item.type === "defMagic"){
+            monster.defMagicLv += item.value
+        }
+        if(item.type==="speed"){
+            monster.speedLv += item.value
+        }
+        if(item.type==="hurt"){
+            if(item.valueType==="percent"){
+                monster.nowLife -= monster.life*item.value/100
+            }
+        }
+        monster.atkLv = this.preventExceed(monster.atkLv,5,-5)
+        monster.atkMagicLv = this.preventExceed(monster.atkMagicLv,5,-5)
+        monster.defLv = this.preventExceed(monster.defLv,5,-5)
+        monster.defMagicLv = this.preventExceed(monster.defMagicLv,5,-5)
+        monster.speedLv = this.preventExceed(monster.speedLv,5,-5)
+        return monster
+    },//处理延迟效果
     async waitToDo(time,fun){
         await new Promise((resolve, reject) => {
             setTimeout(() => {

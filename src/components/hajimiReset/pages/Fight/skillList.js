@@ -132,13 +132,16 @@ let skillList = [
 // 加成 分子+1
 // 消弱 分母+1
 import saierSkill from "../Skill/saierSkill.js"
+import threeKingdomsSkill from "../Skill/threeKingdomsSkill.js"
+
 export default {
     getSkillDetailByName(name){
         // console.log(name)
         let allSkillList = []
         allSkillList = [
             ...skillList,
-            ...saierSkill.getSaierSkillList()
+            ...saierSkill.getSaierSkillList(),
+            ...threeKingdomsSkill.getThreeKingdomsSkillList()
         ]
         // console.log(allSkillList)
         return allSkillList.find(skill=>skill.name===name)||
@@ -180,7 +183,7 @@ export default {
         let skill = this.getSkillDetailByName(name)
         return skill.aim==="single"
     },//检查技能是否需要选择目标
-    useSkill(name,toWho="botMes",user, targetIndex=null,allMes,store){
+    async useSkill(name,toWho="botMes",user, targetIndex=null,allMes,store){
         //此处toWho不是释放者而是目标
         let selfEffect = ""
         if(toWho==="botMes"){
@@ -261,8 +264,8 @@ export default {
                     return allMes
                 }
             }
-            if(allMes.fightMes[toWho].monsterList[targetIndex].protect>0){
-                //如果目标有保护，就减少保护值
+            if(skill.type!=="team"&&allMes.fightMes[toWho].monsterList[targetIndex].protect>0){
+                //如果目标有保护，就减少保护值 对team类型技能不做处理
                 allMes.fightMes[toWho].monsterList[targetIndex].protect = 0
             }else{
                 if(skill.type==="atk"||skill.type==="atkMagic"){
@@ -273,7 +276,8 @@ export default {
                         allMes.fightMes[selfEffect].monsterList[user.groundIndex].status = "atkMagic"
                     }
                     //攻击动画
-                    allMes.fightMes[toWho].monsterList.map((item,index)=>{
+                    for(let index=0;index<allMes.fightMes[toWho].monsterList.length;index++){
+                        let item = allMes.fightMes[toWho].monsterList[index]
                         if(index===targetIndex){
                             // 找到场上的精灵
                             //处理闪避概率
@@ -334,21 +338,29 @@ export default {
                                 if(skill.atkAdd?.myLoss){
                                     allMes.fightMes[selfEffect].monsterList[user.groundIndex].nowLife -= (user.life-user.nowLife)*skill.atkAdd.myLoss/100
                                 }//处理自身已损生命值的百分比伤害返还
+                                if(skill.atkAdd?.incomplete){
+                                    // 根据自身残血程度增加伤害
+                                    let incomplete = allMes.fightMes[selfEffect].monsterList[user.groundIndex].nowLife/allMes.fightMes[selfEffect].monsterList[user.groundIndex].life
+                                    item.nowLife += Math.round(lifeChange*(1-incomplete))
+                                }
                                 //处理生命值变化
                                 if(item.nowLife<=0){
                                     if(skill.name==="手下留情"){
                                         item.nowLife = 1
                                     }else{
-                                        item.nowLife = 0
-                                        item.onGround = false
-                                        item.isDead = true
-                                        console.log(item.name + "似了喵")
-                                        store.commit("hajimiReset/setTipList",[item.name + "倒下了！"])
-                                        if(!this.haveMoreMonster(allMes.fightMes[toWho].monsterList)) {
-                                            // 所有精灵都死亡了
-                                            store.commit("hajimiReset/setTipList",["游戏结束"])
-                                            allMes.fightMes.result = toWho==="myMes"?"lose":"win"
-                                        }
+                                        // store.commit("hajimiReset/setTipList",[item.name + "倒下了！"])
+                                        await this.waitToDo(1000,() => {
+                                            item.nowLife = 0
+                                            item.onGround = false
+                                            item.isDead = true
+                                            console.log(item.name + "似了喵")
+                                            if(!this.haveMoreMonster(allMes.fightMes[toWho].monsterList)) {
+                                                // 所有精灵都死亡了
+                                                console.log("游戏结束")
+                                                store.commit("hajimiReset/setTipList",["游戏结束"])
+                                                allMes.fightMes.result = toWho==="myMes"?"lose":"win"
+                                            }
+                                        })
                                     }
                                     return allMes
                                 }
@@ -424,8 +436,8 @@ export default {
                                     }//处理对自己的额外效果
                                 }
                             }
-                        }
-                    })
+                        }//forEach/map无法正确的处理await
+                    }
                 }
                 if(skill.type==="effect"){
                     //处理效果技能
@@ -511,7 +523,77 @@ export default {
                                         item.speedLv = 0
                                     }
                                 }
+                                if(effectItem.type==="delay"){
+                                    effectItem.list.forEach(one=>{
+                                        item.delay.push(one)
+                                    })
+                                }//处理延迟效果
                             })
+                            randow = Math.random()
+                            let mySelf = allMes.fightMes[selfEffect].monsterList[user.groundIndex]
+                            skill.effect.my.forEach(effectItem=>{
+                                if(effectItem?.percent&&randow<effectItem.percent/100){
+                                    return
+                                }//如果在这里出现了概率，而且没有触发，就直接跳过单次循环
+                                if(effectItem.type==="atk"){
+                                    mySelf.atkLv += effectItem.value
+                                    mySelf.atkLv = this.preventExceed(mySelf.atkLv,5,-5)
+                                }
+                                if(effectItem.type==="atkMagic"){
+                                    mySelf.atkMagicLv += effectItem.value
+                                    mySelf.atkMagicLv = this.preventExceed(mySelf.atkMagicLv,5,-5)
+                                }
+                                if(effectItem.type==="def"){
+                                    mySelf.defLv += effectItem.value
+                                    mySelf.defLv = this.preventExceed(mySelf.defLv,5,-5)
+                                }
+                                if(effectItem.type==="defMagic"){
+                                    mySelf.defMagicLv += effectItem.value
+                                    mySelf.defMagicLv = this.preventExceed(mySelf.defMagicLv,5,-5)
+                                }
+                                if(effectItem.type==="speed"){
+                                    mySelf.speedLv += effectItem.value
+                                    mySelf.speedLv = this.preventExceed(mySelf.speedLv,5,-5)
+                                }
+                                if(effectItem.type==="lock"&&mySelf.lock===0){
+                                    //处于封印状态不可再次被封印
+                                    mySelf.lock += effectItem.value//处理封印
+                                }
+                                if(effectItem.type==="hurt"){
+                                    //处理持续伤害类技能
+                                    if(effectItem.valueType==="percent"){
+                                        let lifeValue = mySelf.life  * Number(effectItem.value) / 100
+                                        mySelf.hurtValue = lifeValue
+                                        mySelf.hurtTurn = effectItem.turn
+                                    }
+                                }
+                                if(effectItem.type==="cleanUp"){
+                                    //处理清空对方能力提升效果
+                                    if(mySelf.atkLv>0){
+                                        mySelf.atkLv = 0
+                                    }
+                                    if(mySelf.atkMagicLv>0){
+                                        mySelf.atkMagicLv = 0
+                                    }
+                                    if(mySelf.defLv>0){
+                                        mySelf.defLv = 0
+                                    }
+                                    if(mySelf.defMagicLv>0){
+                                        mySelf.defMagicLv = 0
+                                    }
+                                    if(mySelf.speedLv>0){
+                                        mySelf.speedLv = 0
+                                    }
+                                }
+                                if(effectItem.type==="delay"){
+                                    effectItem.list.forEach(one=>{
+                                        mySelf.delay.push(one)
+                                    })
+                                }//处理延迟效果
+                            })
+                            allMes.fightMes[selfEffect].monsterList[user.groundIndex] = mySelf
+                            //把处理完的结果赋值回去
+
                             // 执行技能
                             if(item.nowLife<=0){
                                 item.nowLife = 0
@@ -534,6 +616,13 @@ export default {
                         if(item.type==="protect"){
                             allMes.fightMes[selfEffect].monsterList[targetIndex].protect = item.num
                         }//保护罩不能叠加
+                        if(item.type==="cure"){
+                            //处理治疗类技能
+                            let selectOne = allMes.fightMes[selfEffect].monsterList[targetIndex]
+                            let lifeValue = Math.round(item.percent * selectOne.life / 100)
+                            selectOne.nowLife += lifeValue
+                            allMes.fightMes[selfEffect].monsterList[targetIndex].nowLife = this.preventExceed(selectOne.nowLife,selectOne.life,0)
+                        }//友方治疗效果
                     })
                 } 
             }
@@ -731,7 +820,8 @@ export default {
     haveMoreMonster(monsterList){
         let haveMore = false
         monsterList.forEach(monster=>{
-            if(!monster.isDead===true){
+            console.log(monster)
+            if(monster.isDead!==true){
                 haveMore = true
             }
         })
@@ -739,7 +829,8 @@ export default {
     },//检查还有没有能上场的精灵
     getSkillList(name,level){
         let allSkillList = [
-            ...saierSkill.getSkillList()
+            ...saierSkill.getSkillList(),
+            ...threeKingdomsSkill.getSkillList(),
         ]
         let skillList = []
         allSkillList.forEach(skill=>{
@@ -753,9 +844,36 @@ export default {
         })
         return skillList
     },//根据名字和等级获取技能列表
+    getAllSkillList(name){
+        let allSkillList = [
+            ...saierSkill.getSkillList(),
+            ...threeKingdomsSkill.getSkillList(),
+        ]
+        let skillList = []
+        allSkillList.forEach(skill=>{
+            if(skill.name===name){
+                skillList = skill.skillList
+            }
+        })
+        return skillList
+    },//不限等级全部获取信息
+    getAllSkillListNew(name){
+        let allSkillList = [
+            ...saierSkill.getSkillList(),
+            ...threeKingdomsSkill.getSkillList(),
+        ]
+        let skillList = {}
+        allSkillList.forEach(skill=>{
+            if(skill.name===name){
+                skillList = skill
+            }
+        })
+        return skillList
+    },//不限等级全部获取信息
     getSkillListByLv(name,level){
         let allSkillList = [
-            ...saierSkill.getSkillList()
+            ...saierSkill.getSkillList(),
+            ...threeKingdomsSkill.getSkillList(),
         ]
         let skillList = []
         allSkillList.forEach(skill=>{
@@ -770,4 +888,22 @@ export default {
         })
         return skillList
     },//根据名字和具体某一等级获取技能列表
+    getLogicUseSkillByName(skillList,monster,allMes,store,router){
+        let allSkillMes = this.getAllSkillListNew(monster.name)
+        if(allSkillMes?.logic&&allSkillMes.logic.length>0){
+            return allSkillMes.logic(allMes,skillList)
+        }else{
+            return Math.floor(Math.random()*skillList.length)
+        }
+    },
+    async waitToDo(time,fun){
+        await new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve()
+            }, time);
+        })
+        if (typeof fun === 'function') {
+            return await fun();
+        }
+    },//等待执行完成
 }

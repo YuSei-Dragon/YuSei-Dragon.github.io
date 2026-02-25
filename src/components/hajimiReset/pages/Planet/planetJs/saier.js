@@ -654,6 +654,24 @@ export default {
             return bossMes[name]
         }
         return ""
-    }
+    },
+    getSceneTipText(scene){
+        let tip = ""
+        switch(scene){
+            case "saier_Klaus_grassland":
+                tip = "克洛斯星草地，皮皮在此出没"
+                break
+            case "saier_Klaus_swamp":
+                tip = "克洛斯星沼泽，仙人球/小豆芽在此出没"
+                break
+            case "saier_Klaus_woodland":
+                tip = "克洛斯星林间，蘑菇怪/依依在此出没"
+                break
+            case "saier_Klaus_earthcore":
+                tip = "克洛斯星地球核心，利利/小犬苗/埃尔特在此出没"
+                break
+        }
+        return tip
+    },//根据场景名称获取场景提示文本
 
 }

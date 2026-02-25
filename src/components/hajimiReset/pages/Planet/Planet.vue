@@ -117,20 +117,37 @@ const moveMonster = ()=>{
             newTop = Math.max(0, Math.min(270, newTop));
         }
         // 更新位置
-        monster.position.left = newLeft;
-        monster.position.top = newTop;
+        if(monster.cantMove&&monster.cantMove===true){
+            //如果不能移动，不更新位置
+            // console.log("不能移动")
+        }else{
+            monster.position.left = newLeft;
+            monster.position.top = newTop;
+        }
+        
     })
     setTimeout(()=>{
         moveMonster()
     },3000)
 }//随机移动方法
 const emit = defineEmits(['clickMonster'])
+const isShowTip = ref(false)
+const clickTipText = ref("")
+const selectMonster = ref({})
 const clickMonster = (monster)=>{
-    //点击精灵，进入野生精灵对战
-    console.log(monster)
-    allMes.value.wildMonster = monster
-    store.commit("hajimiReset/setAllMes",allMes.value)
-    router.push(`/hajimiReset/fight/ground?type=wildBattle&ground=${selectedScene.value}`)
+    if(monster?.showTip&&monster.showTip!==""){
+        // store.commit("hajimiReset/setTipList",[monster.showTip])
+        selectMonster.value = monster
+        isShowTip.value = true
+        clickTipText.value = monster.showTip
+    }else{
+        //点击精灵，进入野生精灵对战
+        console.log(monster)
+        allMes.value.wildMonster = monster
+        store.commit("hajimiReset/setAllMes",allMes.value)
+        router.push(`/hajimiReset/fight/ground?type=wildBattle&ground=${selectedScene.value}`)
+    }
+    
 }
 const selectedGround = ref("")
 //大场景
@@ -159,6 +176,7 @@ const changeGround = (val)=>{
     sceneList.value = props.groundList.find(item=>item.value===val).sceneList
     if(sceneList.value.length>0){
         selectedScene.value = sceneList.value[0].value
+        sceneTipText.value = planetApi.getSceneTipText(sceneList.value[0].value)
     }else{
         store.commit("setTipList",["当前地图暂无场景"])
     }
@@ -167,22 +185,50 @@ const changeGround = (val)=>{
         moveMonster()
     },3000)
 }//改变当前场景
+const sceneTipText = ref("")
 const changeScene = (val)=>{
     moving.value = false
     console.log(val)
     selectedScene.value = val
     monsterShowList.value = planetApi.getMonsterListByGround(selectedGround.value,val)
     console.log(monsterShowList.value)
+    sceneTipText.value = planetApi.getSceneTipText(val)
     setTimeout(()=>{
         moving.value = true
         moveMonster()
     },3000)
 }//改变当前小区域
+const isOpen = ref(false)
+const tipClickSure = ()=>{
+    isShowTip.value = false
+    console.log(selectMonster.value)
+    let botList = []
+    let myList = []
+    selectMonster.value.fightMes.botMonsterList.forEach(item=>{
+        botList.push(planetApi.getMonsterBasicMesByName(item.name,item.level))
+        // console.log(planetApi.getMonsterBasicMesByName(item.name))
+    })
+    selectMonster.value.fightMes.myMonsterList.forEach(item=>{  
+        myList.push(planetApi.getMonsterBasicMesByName(item.name,item.level))
+    })
+    // console.log(selectMonster.value.fightMes)
+    allMes.value.campaignMes = {
+        myMonsterList:myList,
+        botMonsterList:botList,
+        botPower:selectMonster.value.fightMes.botPower||-1,
+    }
+    allMes.value.wildMonster = {}//重置野生精灵信息，用于验证boss精元
+    // selectMonster.value
+    store.commit("hajimiReset/setAllMes",allMes.value)
+    router.push(`/hajimiReset/fight/ground?type=campaign&ground=${selectedScene.value}&lockLevel=${selectMonster.value.fightMes?.lockLevel||0}`)
+}
 </script>
 
 <template lang="pug">
 .saier-block
     .saier-back(@click="changePage()") 返回
+    .planet-title-slot
+        slot(name="planetTitle")
     .saier-monster-block(:style="getGroundBackground()")
         .saier-monster(v-for="monster in monsterShowList" 
             :key="monster.id" :style="getMonsterStyle(monster.position)"
@@ -195,6 +241,12 @@ const changeScene = (val)=>{
     el-select(class="saier-select" style="width: 150px;" v-model="selectedGround"
         @change="changeGround")
         el-option(v-for="item in props.groundList" :key="item.label" :label="item.label" :value="item.value" )
+    .planet-scene-text-block(@click="isOpen = !isOpen" :style="{'height':isOpen?'auto':'30px','white-space':isOpen?'':'nowrap'}") {{sceneTipText}}
+    .planet-tip-block(@click="isShowTip = false" v-if="isShowTip")
+        .planet-tip(@click.stop="")
+            .planet-tip-text {{clickTipText}}
+            .planet-tip-text(v-if="selectMonster.fightMes.lockLevel") 注意：该Boss有{{selectMonster.fightMes.lockLevel}} 级等级锁！
+            .planet-tip-button(@click="tipClickSure()") 确 定
 </template>
 <style scoped lang="scss">
 .saier-block{
@@ -217,6 +269,13 @@ const changeScene = (val)=>{
         cursor: pointer;
         color: #fff;
     }
+    .planet-title-slot{
+        position: absolute;
+        top: 11px;
+        left: 80px;
+        width: 100px;
+        height: 30px;
+    }
     .saier-monster-block{
         width: 500px;
         height: 300px;
@@ -233,6 +292,7 @@ const changeScene = (val)=>{
             cursor: pointer;
             .saier-monster-name{
                 position: absolute;
+                width: 100px;
                 top: -16px;
                 left: 0px;
                 color: #fff;
@@ -273,6 +333,61 @@ const changeScene = (val)=>{
             color: #fff;
         }:deep(.is-focused) {
             box-shadow: 0 0 0 1px #ee33ff;
+        }
+    }
+    .planet-scene-text-block{
+        position: absolute;
+        bottom: 10px;
+        left: 50px;
+        width: 500px;
+        height: 30px;
+        font-size: 14px;
+        text-indent: 28px;
+        background-color: #500a92;
+        border: 1px solid #ee33ff;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #fff;
+        box-sizing: border-box;
+        padding: 4px;
+        overflow: hidden;
+        // white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .planet-tip-block{
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.3);
+        .planet-tip{
+            width: 400px;
+            height: 200px;
+            background-color: #7e30c9;
+            border: 1px solid #ee33ff;
+            border-radius: 4px;
+            margin: 100px;
+            position: relative;
+            .planet-tip-text{
+                padding: 10px;
+                font-size: 14px;
+                color: #fff900;
+            }
+            .planet-tip-button{
+                position: absolute;
+                bottom: 10px;
+                right: 10px;
+                width: 80px;
+                height: 30px;
+                font-size: 12px;
+                line-height: 30px;
+                text-align: center;
+                background-color: #1db040;
+                border-radius: 4px;
+                cursor: pointer;
+                color: #fff;
+            }
         }
     }
 }

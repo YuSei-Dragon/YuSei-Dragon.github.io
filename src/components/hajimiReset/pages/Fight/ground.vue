@@ -47,12 +47,15 @@ onMounted(()=>{
     console.log("ground mounted")
     allMes.value = store.state.hajimiReset.allMes
     // 数据本地化，方便后续使用
+    // console.log(allMes.value)
     let myMonsterList = []
     allMes.value.playerMes.monsterFightList.forEach(monIndex=>{
         myMonsterList.push(allMes.value.playerMes.monsterList[monIndex])
     })//设置出战精灵
     let level = route.query.level
     let type = route.query.type
+    let lockLevel = route.query?.lockLevel||0
+    //是否锁等级
     let ground = planetApi.getGroundByName(route.query.ground)
     let botMes = {}
     // console.log(route.query)
@@ -62,8 +65,14 @@ onMounted(()=>{
         console.log("野生精灵对战")
         botMes = wildMonsterApi.getWildMonster(allMes.value.wildMonster)
         console.log(botMes)
+    }else if(type==="campaign"){
+        botMes = {
+            name : allMes.value.campaignMes.botMonsterList[0].name,
+            level : allMes.value.campaignMes.botMonsterList[0].level,
+            monsterList:allMes.value.campaignMes.botMonsterList,//战役对决
+        }
     }
-    allMes.value.fightMes = {
+    let fightMes = {
         myMes:{
             life: 1000,
             allLife: 1000,
@@ -81,7 +90,39 @@ onMounted(()=>{
         whosTurn:"",
         result:"",
     }
-    api.callMonster("botMes",0,allMes.value,store)
+    if(lockLevel>0){
+        fightMes.myMes.monsterList.map(item=>{
+            item.level = lockLevel
+            item.atk = Math.round(item.atk*lockLevel/item.level)
+            item.def = Math.round(item.def*lockLevel/item.level)
+            item.atkMagic = Math.round(item.atkMagic*lockLevel/item.level)
+            item.defMagic = Math.round(item.defMagic*lockLevel/item.level)
+            item.speed = Math.round(item.speed*lockLevel/item.level)
+            //五项能力和等级同步下降到锁定等级同步水平
+        })
+    }
+    if(type==="campaign"){
+        let myMonsterList = api.getMonsterFightList(allMes.value.campaignMes.myMonsterList)
+        let oldLength = fightMes.myMes.monsterList.length
+        myMonsterList.forEach(item=>{
+            fightMes.myMes.monsterList.push({...item,
+                isTemporary:true,
+            })
+        })
+        allMes.value.fightMes = fightMes
+        fightMes.myMes.monsterList.forEach((item,index)=>{
+            if((oldLength>0)&&(index>(oldLength-1))){
+                allMes.value.fightMes.myMes.power+=2
+                allMes.value = api.callMonster("myMes",index,allMes.value,store)
+            }
+        })
+        if(allMes.value.campaignMes.botPower>-1){
+            fightMes.botMes.power = allMes.value.campaignMes.botPower
+        }
+    }//战役模式如果有友军的话先把友军召唤上场
+    allMes.value.fightMes = fightMes
+    console.log(fightMes)
+    allMes.value = api.callMonster("botMes",0,allMes.value,store)
     api.gameStart(allMes.value,store)
     //开始游戏
 })
@@ -210,6 +251,12 @@ const getMonsterOnHandStyle = (index)=>{
     }return ""
 }//控制选中手上精灵的样式
 const callMonster = ()=>{
+    if(allMes.value.fightMes.myMes.monsterList.length>=6){
+        return store.commit("hajimiReset/setTipList",["最多只能召唤6只精灵！"])
+    }
+    if(monsterChoicedIndex.value<0){
+        return store.commit("hajimiReset/setTipList",["请选择要召唤的精灵！"])
+    }
     allMes.value = api.callMonster("myMes",monsterChoicedIndex.value,allMes.value,store)
     showMySkillTip.value = true
     mySkillTipBottom.value = "召唤了：" + allMes.value.fightMes.myMes.monsterList[monsterChoicedIndex.value].name + " !"
@@ -256,8 +303,8 @@ const selectTarget = (target) => {
         skillSelectionPromise.value = null
     }
 }// 目标选择方法
-const executeSkill = (name, target=null)=>{
-    allMes.value = skillApi.useSkill(name,"botMes",selectedMonster.value, target, allMes.value, store)
+const executeSkill = async(name, target=null)=>{
+    allMes.value = await skillApi.useSkill(name,"botMes",selectedMonster.value, target, allMes.value, store)
     console.log(allMes.value)
     showMySkillTip.value = true
     //展示技能发动提示
@@ -269,6 +316,7 @@ const executeSkill = (name, target=null)=>{
         mySkillTipBottom.value = ""
     }, 2000);
     if(allMes.value.fightMes.result!==""){
+        console.log("获取到结果",allMes.value.fightMes.result)
         store.commit("hajimiReset/setTipList",
         [allMes.value.fightMes.result==="win"?"你赢了":"你输了"])
         store.commit("hajimiReset/setAllMes",allMes.value)
@@ -287,8 +335,42 @@ const endTrun = ()=>{
             showBotSkillTip.value = false
             botSkillTipTop.value = ""
             botSkillTipBottom.value = ""
+
         }, 2000);
+    },router)
+}
+const getDelayTip = (delayList)=>{
+    let text = ""
+    delayList.forEach((item,index) => {
+        let textOne = ""
+        if(item.type==="hurt"){
+            if(item.valueType === "percent"){
+                textOne += `${item.turn}回合后受到最大生命值${item.value}%伤害`
+            }
+        }
+        if(item.type==="atk"){
+            textOne += `${item.turn}回合后攻击等级${item.value>0?("+"+item.value):item.value}`
+        }
+        if(item.type === "atkMagic"){
+            textOne += `${item.turn}回合后特殊攻击等级${item.value>0?("+"+item.value):item.value}`
+        }
+        if(item.type==="def"){
+            textOne += `${item.turn}回合后防御等级${item.value>0?("+"+item.value):item.value}`
+        }
+        if(item.type === "defMagic"){
+            textOne += `${item.turn}回合后特殊防御等级${item.value>0?("+"+item.value):item.value}`
+        }
+        if(item.type==="speed"){
+            textOne += `${item.turn}回合后移动速度等级${item.value>0?("+"+item.value):item.value}`
+        }
+        if(text!==""){
+            text += "，" + textOne
+        }else{
+            text += textOne
+        }
     })
+    return text
+
 }
 const getLvColor = (lv)=>{
     if(lv>0){
@@ -391,7 +473,9 @@ const botSkillTipBottom = ref("")
                 MonsterMove(class="fight-ground-monster-img" :status="myMonster.status"
                     @click="selectMonster(myMonster,groundIndex)")
                 .fight-ground-monster-life(:style="getMonsterLifeStyle(myMonster)")
-                .fight-ground-monster-name {{myMonster.name}}
+                .fight-ground-monster-name(v-if="myMonster.name.length<=6") {{myMonster.name}}
+                el-tooltip(effect="dark" :content="myMonster.name" placement="top" v-if="myMonster.name.length>6")
+                    .fight-ground-monster-name {{myMonster.name}}
                 .fight-ground-monster-status
                     el-tooltip(effect="dark" :content="myMonster.lock+'自身回合无法使用技能'" placement="left-start")
                         .fight-ground-monster-lock(v-show="myMonster.lock>0")
@@ -403,12 +487,14 @@ const botSkillTipBottom = ref("")
                         .fight-ground-monster-clean(v-show="myMonster.clean>0")
                     el-tooltip(effect="dark" content="护盾保护" placement="left-start")
                         .fight-ground-monster-protect(v-show="myMonster.protect>0")
+                    el-tooltip(v-if="myMonster.delay&&myMonster.delay.length>0" effect="dark" :content="getDelayTip(myMonster.delay)" placement="left-start")
+                        .fight-ground-monster-delay()
                 .fight-ground-monster-lv
                     .fight-ground-monster-lv-one(:style="getLvColor(myMonster.atkLv)" v-show="myMonster.atkLv!==0") A:{{myMonster.atkLv}}
                     .fight-ground-monster-lv-one(:style="getLvColor(myMonster.defLv)" v-show="myMonster.defLv!==0") D:{{myMonster.defLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.atkLv)" v-show="myMonster.atkMagicLv!==0") Am:{{myMonster.atkMagicLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.defLv)" v-show="myMonster.defMagicLv!==0") Dm:{{myMonster.defMagicLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.defLv)" v-show="myMonster.speedLv!==0") S:{{myMonster.speedLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.atkMagicLv)" v-show="myMonster.atkMagicLv!==0") Am:{{myMonster.atkMagicLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.defMagicLv)" v-show="myMonster.defMagicLv!==0") Dm:{{myMonster.defMagicLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(myMonster.speedLv)" v-show="myMonster.speedLv!==0") S:{{myMonster.speedLv}}
                 LifeChange(class="fight-ground-monster-life-change" :life="myMonster.nowLife")
     .fight-ground-monsters.bot-monsters(v-if="allMes?.fightMes?.botMes?.monsterList?.length>0"
         :style="getWidthFromLength(allMes?.fightMes?.botMes?.monsterList)")
@@ -416,7 +502,9 @@ const botSkillTipBottom = ref("")
             .fight-ground-monster(v-if="botMonster.onGround" :style="getMagnificationStyle(botMonster)")    
                 MonsterMove(class="fight-ground-monster-img" :status="botMonster.status")
                 .fight-ground-monster-life(:style="getMonsterLifeStyle(botMonster)")
-                .fight-ground-monster-name {{botMonster.name}}
+                .fight-ground-monster-name(v-if="botMonster.name.length<=6") {{botMonster.name}}
+                el-tooltip(effect="dark" :content="botMonster.name" placement="top" v-if="botMonster.name.length>6")
+                    .fight-ground-monster-name {{botMonster.name}}
                 .fight-ground-monster-status
                     el-tooltip(effect="dark" :content="botMonster.lock+'自身回合无法使用技能'" placement="left-start")
                         .fight-ground-monster-lock(v-show="botMonster.lock>0")
@@ -431,9 +519,9 @@ const botSkillTipBottom = ref("")
                 .fight-ground-monster-lv
                     .fight-ground-monster-lv-one(:style="getLvColor(botMonster.atkLv)" v-show="botMonster.atkLv!==0") A:{{botMonster.atkLv}}
                     .fight-ground-monster-lv-one(:style="getLvColor(botMonster.defLv)" v-show="botMonster.defLv!==0") D:{{botMonster.defLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.atkLv)" v-show="botMonster.atkMagicLv!==0") Am:{{botMonster.atkMagicLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.defLv)" v-show="botMonster.defMagicLv!==0") Dm:{{botMonster.defMagicLv}}
-                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.defLv)" v-show="botMonster.speedLv!==0") S:{{botMonster.speedLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.atkMagicLv)" v-show="botMonster.atkMagicLv!==0") Am:{{botMonster.atkMagicLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.defMagicLv)" v-show="botMonster.defMagicLv!==0") Dm:{{botMonster.defMagicLv}}
+                    .fight-ground-monster-lv-one(:style="getLvColor(botMonster.speedLv)" v-show="botMonster.speedLv!==0") S:{{botMonster.speedLv}}
                 LifeChange(class="fight-ground-monster-life-change" :life="botMonster.nowLife")
     .fight-ground-monster-ready-block
         .fight-ground-monster-ready-list-block
@@ -449,6 +537,7 @@ const botSkillTipBottom = ref("")
                             @click="selectMonsterOnHand(index)" v-show="!monster.onGround&&monster.life>0" )
                             .fight-ground-monster-ready-list-for-name {{monster.name}}
                             .fight-ground-monster-ready-list-for-level {{monster.level}}
+                            .fight-ground-monster-ready-list-for-dead(v-show="monster.isDead===true")
                     template(#default)
                         .fight-ground-monster-ready-list-for-detail(
                             style="width:150px;padding:0px;margin:0px;max-height:240px;overflow-y: auto;position: relative;"
@@ -672,6 +761,9 @@ const botSkillTipBottom = ref("")
                 border-radius: 3px;
                 font-size: 8px;
                 color:#fff;
+                white-space: nowrap; /* 禁止换行 */
+                overflow: hidden; /* 隐藏溢出部分 */
+                text-overflow: ellipsis;/* 显示省略号 */
             }
             .fight-ground-monster-status{
                 position: absolute;
@@ -710,6 +802,13 @@ const botSkillTipBottom = ref("")
                     width: 12px;
                     height: 12px;
                     background: url(../../img/protect.png) no-repeat;
+                    background-size: 100% 100%;
+                    margin-bottom:4px;
+                }
+                .fight-ground-monster-delay{
+                    width: 12px;
+                    height: 12px;
+                    background: url(../../img/delay.png) no-repeat;
                     background-size: 100% 100%;
                     margin-bottom:4px;
                 }
@@ -779,6 +878,15 @@ const botSkillTipBottom = ref("")
                             position: absolute;
                             top: 0px;
                             right: 4px;
+                        }
+                        .fight-ground-monster-ready-list-for-dead{
+                            width: 16px;
+                            height: 16px;
+                            background: url(../../img/dead1.png) no-repeat;
+                            background-size: 100% 100%;
+                            position: absolute;
+                            bottom: 2px;
+                            right: 2px;
                         }
                     }
             }

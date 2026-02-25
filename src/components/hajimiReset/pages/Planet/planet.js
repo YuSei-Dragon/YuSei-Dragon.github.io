@@ -1,12 +1,16 @@
 import skillApi from "../Fight/skillList.js"
 import saierApi from "./planetJs/saier.js"
+import threeKingdomsApi from "./planetJs/threeKingdoms.js"
 export default {
-    getMonsterBasicMesByName(name){
+    getMonsterBasicMesByName(name,level,x="",y="",cantMove=false,showTip="",fightMes={}){
         let result = this.getWildMonsterMesByName(name)
         let finallyLevel = Number(result.basicLevel + (Math.random()>0.5?-1:1)* Math.floor(2*Math.random()))
         if(result?.isBoss&&result.isBoss===true){
             finallyLevel = result.basicLevel
         }//如果是Boss，等级固定
+        if(level){
+            finallyLevel = level
+        }//如果有指定等级，则优先级更高
         return {
             name:result.name,
             isBoss:result.isBoss||false,
@@ -26,11 +30,14 @@ export default {
             },//个体值
             "potentiality": this.getRandowPotentiality(finallyLevel),//潜力值
             position:{
-                left:Math.floor(470*Math.random()),
-                top:Math.floor(270*Math.random()),
+                left:x===""?Math.floor(470*Math.random()):Number(x),
+                top:y===""?Math.floor(270*Math.random()):Number(y),
             },
             skillList: skillApi.getSkillList(result.name,finallyLevel),
-            allSkillList: skillApi.getSkillList(result.name,finallyLevel)
+            allSkillList: skillApi.getSkillList(result.name,finallyLevel),
+            cantMove:cantMove,
+            showTip:showTip,
+            fightMes:fightMes,
         }
     },//通过名字获取信息后进行基本处理
     getWildMonsterMesByName(name){
@@ -39,6 +46,10 @@ export default {
         }
         let res = {}
         res = saierApi.getWildMonsterMesByName(name)
+        if(res?.name){
+            result = res
+        }
+        res = threeKingdomsApi.getWildMonsterMesByName(name)
         if(res?.name){
             result = res
         }
@@ -54,7 +65,7 @@ export default {
         if(resList.length>0){
             monsterMes = resList
         }//遍历所有的星球
-        resList = saierApi.getMonsterListByGround(ground,scene)
+        resList = threeKingdomsApi.getMonsterListByGround(ground,scene)
         if(resList.length>0){
             monsterMes = resList
         }//遍历所有的星球
@@ -63,43 +74,44 @@ export default {
             monsterMes.map((monster)=>{
                 if(monster.num){
                     for(let j = 0;j<monster.num;j++){
-                        monsterList.push(this.getMonsterBasicMesByName(monster.name))
+                        monsterList.push(this.getMonsterBasicMesByName(monster.name,monster.level,monster?.position?.x,monster?.position?.y,monster?.cantMove,monster?.showTip,monster?.fightMes))
                     }//如果有强制刷新数量，先处理强制刷新
                     allNum -= monster.num
                 }
             })
             for(let i = 0;i<allNum;i++){
                 monsterMes.forEach((item,index)=>{
-                    let num = Number(Math.random().toFixed(2))*100
-                    let monster = {}
-                    let minNum = 0
-                    let maxNum = 0
-                    monsterMes.forEach((item1,index1)=>{
-                        if(index1 < index){
-                            minNum += item1.percent
+                    if(item?.percent){
+                        let num = Number(Math.random().toFixed(2))*100
+                        let monster = {}
+                        let minNum = 0
+                        let maxNum = 0
+                        monsterMes.forEach((item1,index1)=>{
+                            if(index1 < index){
+                                minNum += item1.percent
+                            }
+                            if(index1 == index){
+                                maxNum = item1.percent + minNum
+                            }
+                        })
+                        //找出当前概率的区间
+                        if(num>=minNum && num<=maxNum){
+                            monster = item
+                            monsterList.push(this.getMonsterBasicMesByName(monster.name))
                         }
-                        if(index1 == index){
-                            maxNum = item1.percent + minNum
-                        }
-                    })
-                    //找出当前概率的区间
-                    if(num>=minNum && num<=maxNum){
-                        monster = item
-                        monsterList.push(this.getMonsterBasicMesByName(monster.name))
+                        // if(index<i){
+                        //     minNum+=item.percent
+                        // }
+                        // if(index === i){
+                        //     maxNum=minNum + item.percent
+                        //     monster = item
+                        //     monsterMes.forEach((item1,index1)=>{
+                        //         if(num>=minNum && num<=maxNum){
+                        //             monsterList.push(this.getMonsterBasicMesByName(monster.name))
+                        //         }
+                        //     })
+                        // }
                     }
-                    // if(index<i){
-                    //     minNum+=item.percent
-                    // }
-                    // if(index === i){
-                    //     maxNum=minNum + item.percent
-                    //     monster = item
-                    //     monsterMes.forEach((item1,index1)=>{
-                    //         if(num>=minNum && num<=maxNum){
-                    //             monsterList.push(this.getMonsterBasicMesByName(monster.name))
-                    //         }
-                    //     })
-                    // }
-                    
                 })
             }
         }
@@ -124,7 +136,7 @@ export default {
             num -= randomNum
         }
         return potentiality
-    },
+    },//随机填充努力值
     getRandomInt(num) {
         // 确保输入是正整数
         if (num <= 0 || !Number.isInteger(num)) {
@@ -139,8 +151,12 @@ export default {
         if(ground!==""){
             return ground
         }
+        ground = threeKingdomsApi.getGroundByName(name)
+        if(ground!==""){
+            return ground
+        }
         return ground
-    },
+    },//获取场地数据
     getBossEssence(name){
         let bossMes = ""
         bossMes = saierApi.getBossEssence(name)
@@ -148,5 +164,17 @@ export default {
             return bossMes
         }
         return bossMes
-    }
+    },//获取boss初始形态
+    getSceneTipText(scene){
+        let tip = ""
+        tip = saierApi.getSceneTipText(scene)
+        if(tip!==""){
+            return tip
+        }
+        tip = threeKingdomsApi.getSceneTipText(scene)
+        if(tip!==""){
+            return tip
+        }
+        return tip
+    },//获取场景提示文本
 }

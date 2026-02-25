@@ -101,6 +101,7 @@ const changePage = (title) => {
     // 如果有设置页面
     // router.push('/hajimiReset/settings')
     console.log('设置页面尚未实现')
+    store.commit("hajimiReset/setTipList",["设置页面尚未实现"])
   } else if (title === '商店') {
     router.push('/hajimiReset/shop')
   }

@@ -37,6 +37,8 @@ const initMes = ()=>{
     playerMes.value = JSON.parse(JSON.stringify(allMes.value.playerMes))
     console.log(playerMes.value.monsterList)
     playerMes.value.monsterList.map(monster=>{
+        monster.canLearnSkillList = []
+        //可学习技能
         skillListApi.getSkillList(monster.name,monster.level).forEach(item=>{
             if(monster.allSkillList.find(skill=>skill.name === item)){
                 //已经有这个技能,不再增加
@@ -48,6 +50,16 @@ const initMes = ()=>{
                 }) 
             }
         })//把符合等级的技能添加到精灵的技能列表中
+        skillListApi.getAllSkillList(monster.name).forEach(item1=>{
+            if(item1.level>monster.level){
+                monster.canLearnSkillList.push(item1)
+            }//加入未来可学习的技能
+            monster.allSkillList.map(skill=>{
+                if(skill.name === item1.name){
+                    skill.level = item1.level
+                }
+            })//在展示这里独立处理一次数据
+        })//把对应的等级标记上去
     })//每次加载重新修正一次自动学习的技能
     console.log(playerMes.value)
 }
@@ -146,7 +158,7 @@ const clickSkillAll = (skillName)=>{
 }//选取技能使用
 const canEvolve = (monster)=>{
     let result = planetApi.getWildMonsterMesByName(monster.name)
-    console.log(result)
+    // console.log(result)
     if((result.evolveLv > 0)&&(result.evolveLv <= monster.level)){
         return true
     }
@@ -214,7 +226,15 @@ const evolveMonster = (monster)=>{
                 .monster-skill-all
                     .monster-skill-all-for(v-for="skill in playerMes.monsterList[selectMonsterUse].allSkillList"
                         :key="skill.name" :class="skill.using ? 'monster-skill-all-for-active' : ''"
-                        @click="clickSkillAll(skill.name)" v-show="skill.name.includes(inputSkill)") {{skill.name}}
+                        @click="clickSkillAll(skill.name)" v-show="skill.name.includes(inputSkill)") 
+                        .monster-skill-all-for-name {{skill.name}}
+                        .monster-skill-all-for-level {{skill.level||'?'}}
+                    .monster-skill-all-for(style="background-color:#ff9d9d;" v-for="skill in playerMes.monsterList[selectMonsterUse].canLearnSkillList"
+                        :key="skill.name" v-show="skill.name.includes(inputSkill)"
+                        @click="store.commit('hajimiReset/setTipList', ['此技能需要'+skill.level+'级才能解锁!'])") 
+                        .monster-skill-all-for-name(style="padding-left: 12px") {{skill.name}}
+                        .monster-skill-all-for-level {{skill.level||'?'}}
+                        .monster-skill-all-for-img
             .monster-skill-block
                 .monster-skill-use
                     .monster-skill-use-for(v-for="skill in playerMes.monsterList[selectMonsterUse].skillList" :key="skill"
@@ -422,6 +442,23 @@ const evolveMonster = (monster)=>{
                     padding: 4px 8px;
                     cursor: pointer;
                     margin: 4px 0px;
+                    position: relative;
+                    .monster-skill-all-for-level{
+                        position: absolute;
+                        top: 4px;
+                        right: 4px;
+                        font-size: 10px;
+                        color: #b5f830;
+                    }
+                    .monster-skill-all-for-img{
+                        position: absolute;
+                        top: 4px;
+                        left: 4px;
+                        width: 12px;
+                        height: 12px;
+                        background: url("../../img/lock.png") no-repeat ;
+                        background-size: 12px 12px;
+                    }
                 }
                 .monster-skill-all-for-active{
                     background-color: #aaa;

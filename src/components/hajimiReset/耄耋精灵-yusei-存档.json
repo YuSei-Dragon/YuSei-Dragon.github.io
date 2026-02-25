@@ -7,6 +7,32 @@
         }
     },
     "wildMonster": {},
+    "planetMes": {
+        "saier": {},
+        "threeKingdoms": {
+            "progressList": [
+                {
+                    "name": "魏",
+                    "progress": 0,
+                    "color": "#240d98"
+                },
+                {
+                    "name": "蜀",
+                    "progress": 0,
+                    "color": "#a41313"
+                },
+                {
+                    "name": "吴",
+                    "progress": 0,
+                    "color": "#367408"
+                }
+            ]
+        }
+    },
+    "campaignMes": {
+        "myMonsterList": [],
+        "botMonsterList": []
+    },
     "playerMes": {
         "monsterList": [
             {
@@ -20,12 +46,12 @@
                     "speed": 61
                 },
                 "individual": {
-                    "atk": 2,
-                    "atkMagic": 4,
-                    "def": 46,
-                    "defMagic": 31,
-                    "life": 24,
-                    "speed": 49
+                    "atk": 32,
+                    "atkMagic": 36,
+                    "def": 38,
+                    "defMagic": 42,
+                    "life": 41,
+                    "speed": 26
                 },
                 "potentiality": {
                     "atk": 0,
@@ -55,12 +81,12 @@
                     "speed": 31
                 },
                 "individual": {
-                    "atk": 46,
-                    "atkMagic": 43,
-                    "def": 48,
-                    "defMagic": 4,
-                    "life": 48,
-                    "speed": 6
+                    "atk": 25,
+                    "atkMagic": 7,
+                    "def": 2,
+                    "defMagic": 43,
+                    "life": 17,
+                    "speed": 29
                 },
                 "potentiality": {
                     "atk": 0,
@@ -90,12 +116,12 @@
                     "speed": 40
                 },
                 "individual": {
-                    "atk": 37,
-                    "atkMagic": 37,
-                    "def": 42,
-                    "defMagic": 39,
-                    "life": 26,
-                    "speed": 9
+                    "atk": 18,
+                    "atkMagic": 14,
+                    "def": 32,
+                    "defMagic": 46,
+                    "life": 38,
+                    "speed": 28
                 },
                 "potentiality": {
                     "atk": 0,
@@ -127,6 +153,7 @@
             "fortify": 5,
             "superFortify": 1,
             "supreme": 0
-        }
+        },
+        "money": 1000
     }
 }

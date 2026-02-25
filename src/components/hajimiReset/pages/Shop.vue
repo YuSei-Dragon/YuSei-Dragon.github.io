@@ -31,6 +31,13 @@ const changePage = (title) => {
 onMounted(() => {
     selectOne("精灵卡")
     allMes.value = store.state.hajimiReset.allMes
+    allShopList.forEach(item => {
+        if(item.typeName === "精灵卡"){
+            item.list.forEach(card => {
+                card.num = allMes.value.playerMes.rune[card.realName]
+            })
+        }
+    })
 })
 const selectType = ref("精灵卡")
 const showList = ref([])
@@ -42,25 +49,29 @@ const allShopList = [
                 name:"普通卡",
                 realName:"normal",
                 price:100,
-                desc:"1倍捕捉率"
+                desc:"1倍捕捉率",
+                num:0,
             },
             {
                 name:"强化卡",
                 realName:"fortify",
                 price:200,
-                desc:"1.5倍捕捉率"
+                desc:"1.5倍捕捉率",
+                num:0,
             },
             {
                 name:"超强化卡",
                 realName:"superFortify",
                 price:500,
-                desc:"2倍捕捉率"
+                desc:"2倍捕捉率",
+                num:0,
             },
             {
                 name:"至尊卡",
                 realName:"supreme",
                 price:10000,
-                desc:"捕捉必定成功"
+                desc:"捕捉必定成功",
+                num:0,
             },
         ],
     },
@@ -111,6 +122,13 @@ const sureBuy = ()=>{
     allMes.value.playerMes.rune[buyItem.value.realName] += buyItem.value.num
     store.commit("hajimiReset/setAllMes",allMes.value)
     dialogVisible.value = false
+    allShopList.forEach(item => {
+        if(item.typeName === "精灵卡"){
+            item.list.forEach(card => {
+                card.num = allMes.value.playerMes.rune[card.realName]
+            })
+        }
+    })
 }
 </script>
 
@@ -126,7 +144,9 @@ const sureBuy = ()=>{
     .shop-content
         .shop-content-item( v-for="item in showList" ) 
             el-tooltip(:content="item.desc" placement="top" effect="dark")
-                .shop-one(@click="buy(item)") {{item.name}}
+                .shop-one(@click="buy(item)")
+                    .shop-name() {{item.name}}
+                    .shop-num(style="margin-top: 16px;") 剩余：{{item.num}}
 MyDialog( v-if="dialogVisible" @close="dialogVisible = false")
     template( #body)
         .dialog-padding
