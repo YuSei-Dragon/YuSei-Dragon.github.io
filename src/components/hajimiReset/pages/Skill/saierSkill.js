@@ -1684,6 +1684,28 @@ let monsterSkillListByLevel = [
         ]
     },//魔花仙子
     {
+        name:"依依",
+        skillList:[
+            {level:1,name:"尖顶"},
+            {level:5,name:"毒粉"},
+            {level:11,name:"白雾"},
+            {level:16,name:"飞叶"},
+        ]
+    },//依依
+    {
+        name:"依丁丝",
+        skillList:[
+            {level:1,name:"尖顶"},
+            {level:5,name:"毒粉"},
+            {level:11,name:"白雾"},
+            {level:16,name:"飞叶"},
+            {level:21,name:"突刺"},
+            {level:25,name:"浓缩精华"},
+            {level:29,name:"浓缩汁液"},
+            {level:33,name:"刀叶"},
+        ]
+    },//依丁丝
+    {
         name:"依卡莱恩",
         skillList:[
             {level:1,name:"尖顶"},

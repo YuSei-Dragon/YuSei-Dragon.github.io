@@ -45,7 +45,7 @@ const init = () => {
             allMes.value = runeApi.catchMonster(allMes.value)
             //加入精灵列表
         }else if(allMes.value.fightMes.result==="win"){
-            allMes.value = runeApi.checkBossMonster(allMes.value)
+            allMes.value = runeApi.checkBossMonster(allMes.value,store)
             //击败精灵,检查是否是boss
             store.commit("hajimiReset/setAllMes",allMes.value)
         }else{
@@ -134,7 +134,7 @@ const checkCanEvolution = (name) => {
         padding: 10px 20px;
     }
     .result-tip-for-block{
-        max-height: 296px;
+        max-height: 242px;
         overflow: auto;
     }
     .result-button{

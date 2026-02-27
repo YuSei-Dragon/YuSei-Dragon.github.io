@@ -31,7 +31,180 @@
     },
     "campaignMes": {
         "myMonsterList": [],
-        "botMonsterList": []
+        "botMonsterList": [
+            {
+                "name": "张宝-地公将军",
+                "isBoss": true,
+                "race": {
+                    "atk": 90,
+                    "def": 80,
+                    "atkMagic": 90,
+                    "defMagic": 80,
+                    "life": 80,
+                    "speed": 80
+                },
+                "attribute": "土",
+                "probability": 50,
+                "level": 30,
+                "isWild": true,
+                "individual": {
+                    "atk": 17,
+                    "atkMagic": 1,
+                    "def": 32,
+                    "defMagic": 3,
+                    "life": 17,
+                    "speed": 41
+                },
+                "potentiality": {
+                    "atk": 2,
+                    "def": 0,
+                    "atkMagic": 22,
+                    "defMagic": 6,
+                    "life": 0,
+                    "speed": 0
+                },
+                "position": {
+                    "left": 269,
+                    "top": 180
+                },
+                "skillList": [
+                    "刺拳",
+                    "咆哮",
+                    "侦察兵",
+                    "右鞭腿",
+                    "左正蹬",
+                    "一马当先",
+                    "天兵突袭"
+                ],
+                "allSkillList": [
+                    "刺拳",
+                    "咆哮",
+                    "侦察兵",
+                    "右鞭腿",
+                    "左正蹬",
+                    "一马当先",
+                    "天兵突袭"
+                ],
+                "cantMove": false,
+                "showTip": "",
+                "fightMes": {}
+            },
+            {
+                "name": "张梁-人公将军",
+                "isBoss": true,
+                "race": {
+                    "atk": 110,
+                    "def": 80,
+                    "atkMagic": 60,
+                    "defMagic": 80,
+                    "life": 100,
+                    "speed": 80
+                },
+                "attribute": "火",
+                "probability": 50,
+                "level": 30,
+                "isWild": true,
+                "individual": {
+                    "atk": 0,
+                    "atkMagic": 41,
+                    "def": 20,
+                    "defMagic": 1,
+                    "life": 0,
+                    "speed": 7
+                },
+                "potentiality": {
+                    "atk": 1,
+                    "def": 18,
+                    "atkMagic": 9,
+                    "defMagic": 0,
+                    "life": 2,
+                    "speed": 0
+                },
+                "position": {
+                    "left": 293,
+                    "top": 39
+                },
+                "skillList": [
+                    "刺拳",
+                    "咆哮",
+                    "侦察兵",
+                    "右鞭腿",
+                    "左正蹬",
+                    "一马当先",
+                    "刀枪不入"
+                ],
+                "allSkillList": [
+                    "刺拳",
+                    "咆哮",
+                    "侦察兵",
+                    "右鞭腿",
+                    "左正蹬",
+                    "一马当先",
+                    "刀枪不入"
+                ],
+                "cantMove": false,
+                "showTip": "",
+                "fightMes": {}
+            },
+            {
+                "name": "张角-天公将军",
+                "isBoss": true,
+                "race": {
+                    "atk": 60,
+                    "def": 80,
+                    "atkMagic": 130,
+                    "defMagic": 100,
+                    "life": 80,
+                    "speed": 80
+                },
+                "attribute": "金",
+                "probability": 50,
+                "level": 32,
+                "isWild": true,
+                "individual": {
+                    "atk": 33,
+                    "atkMagic": 25,
+                    "def": 40,
+                    "defMagic": 44,
+                    "life": 43,
+                    "speed": 42
+                },
+                "potentiality": {
+                    "atk": 7,
+                    "def": 1,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 0,
+                    "speed": 24
+                },
+                "position": {
+                    "left": 169,
+                    "top": 227
+                },
+                "skillList": [
+                    "刺拳",
+                    "制药治人",
+                    "召雷之符",
+                    "问道",
+                    "召雨之符",
+                    "太平要术",
+                    "雷公助我"
+                ],
+                "allSkillList": [
+                    "刺拳",
+                    "制药治人",
+                    "召雷之符",
+                    "问道",
+                    "召雨之符",
+                    "太平要术",
+                    "雷公助我"
+                ],
+                "cantMove": false,
+                "showTip": "",
+                "fightMes": {}
+            }
+        ],
+        "botPower": 8
     },
     "playerMes": {
         "monsterList": [
@@ -56,19 +229,41 @@
                 "potentiality": {
                     "atk": 0,
                     "def": 0,
-                    "atkMagic": 0,
+                    "atkMagic": 7,
                     "defMagic": 0,
                     "life": 0,
                     "speed": 0
                 },
                 "attribute": "火",
-                "level": 5,
-                "experience": 0,
+                "level": 12,
+                "experience": 163,
                 "skillList": [
                     "抓",
                     "瞪眼"
                 ],
-                "allSkillList": []
+                "allSkillList": [
+                    {
+                        "name": "抓",
+                        "using": true,
+                        "level": 1
+                    },
+                    {
+                        "name": "瞪眼",
+                        "using": true,
+                        "level": 3
+                    },
+                    {
+                        "name": "火花",
+                        "using": false,
+                        "level": 7
+                    }
+                ],
+                "canLearnSkillList": [
+                    {
+                        "level": 9,
+                        "name": "挑拨"
+                    }
+                ]
             },
             {
                 "name": "布布种子",
@@ -89,7 +284,7 @@
                     "speed": 29
                 },
                 "potentiality": {
-                    "atk": 0,
+                    "atk": 5,
                     "def": 0,
                     "atkMagic": 0,
                     "defMagic": 0,
@@ -97,13 +292,38 @@
                     "speed": 0
                 },
                 "attribute": "木",
-                "level": 5,
-                "experience": 0,
+                "level": 9,
+                "experience": 38,
                 "skillList": [
                     "撞击",
                     "缩头"
                 ],
-                "allSkillList": []
+                "allSkillList": [
+                    {
+                        "name": "撞击",
+                        "using": true,
+                        "level": 1
+                    },
+                    {
+                        "name": "缩头",
+                        "using": true,
+                        "level": 4
+                    }
+                ],
+                "canLearnSkillList": [
+                    {
+                        "level": 9,
+                        "name": "吸取"
+                    },
+                    {
+                        "level": 13,
+                        "name": "疾风刃"
+                    },
+                    {
+                        "level": 17,
+                        "name": "诅咒"
+                    }
+                ]
             },
             {
                 "name": "伊优",
@@ -128,32 +348,583 @@
                     "def": 0,
                     "atkMagic": 0,
                     "defMagic": 0,
-                    "life": 0,
+                    "life": 5,
                     "speed": 0
                 },
                 "attribute": "水",
-                "level": 5,
-                "experience": 0,
+                "level": 8,
+                "experience": 80,
                 "skillList": [
                     "拍打",
                     "鸣叫"
                 ],
-                "allSkillList": []
+                "allSkillList": [
+                    {
+                        "name": "拍打",
+                        "using": true,
+                        "level": 1
+                    },
+                    {
+                        "name": "鸣叫",
+                        "using": true,
+                        "level": 4
+                    }
+                ],
+                "canLearnSkillList": [
+                    {
+                        "level": 8,
+                        "name": "泡沫"
+                    },
+                    {
+                        "level": 11,
+                        "name": "玩水"
+                    },
+                    {
+                        "level": 15,
+                        "name": "飞击"
+                    }
+                ]
+            },
+            {
+                "name": "皮皮",
+                "individual": {
+                    "atk": 44,
+                    "atkMagic": 5,
+                    "def": 6,
+                    "defMagic": 41,
+                    "life": 28,
+                    "speed": 20
+                },
+                "potentiality": {
+                    "atk": 2,
+                    "def": 0,
+                    "atkMagic": 1,
+                    "defMagic": 1,
+                    "life": 0,
+                    "speed": 1
+                },
+                "attribute": "金",
+                "level": 11,
+                "experience": 48,
+                "skillList": [
+                    "撞击",
+                    "鸣叫"
+                ],
+                "race": {
+                    "atk": 30,
+                    "def": 30,
+                    "atkMagic": 30,
+                    "defMagic": 30,
+                    "life": 60,
+                    "speed": 80
+                },
+                "canLearnSkillList": []
+            },
+            {
+                "name": "小豆芽",
+                "individual": {
+                    "atk": 1,
+                    "atkMagic": 22,
+                    "def": 35,
+                    "defMagic": 30,
+                    "life": 7,
+                    "speed": 26
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 4,
+                    "speed": 0
+                },
+                "attribute": "木",
+                "level": 4,
+                "experience": 0,
+                "skillList": [
+                    "针刺"
+                ],
+                "race": {
+                    "atk": 75,
+                    "def": 35,
+                    "atkMagic": 70,
+                    "defMagic": 30,
+                    "life": 50,
+                    "speed": 40
+                }
+            },
+            {
+                "name": "小蘑菇",
+                "isBoss": true,
+                "race": {
+                    "atk": 45,
+                    "def": 50,
+                    "atkMagic": 45,
+                    "defMagic": 55,
+                    "life": 50,
+                    "speed": 30
+                },
+                "attribute": "木",
+                "probability": 0,
+                "level": 1,
+                "isWild": true,
+                "individual": {
+                    "atk": 3,
+                    "atkMagic": 21,
+                    "def": 46,
+                    "defMagic": 27,
+                    "life": 21,
+                    "speed": 21
+                },
+                "potentiality": {
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 0,
+                    "life": 1,
+                    "speed": 0
+                },
+                "position": {
+                    "left": 113,
+                    "top": 8
+                },
+                "skillList": [
+                    "撞击"
+                ],
+                "allSkillList": [
+                    {
+                        "name": "撞击",
+                        "using": true
+                    }
+                ],
+                "cantMove": false,
+                "showTip": "",
+                "fightMes": {}
             }
         ],
         "monsterFightList": [
             0,
             1,
-            2
+            2,
+            3,
+            4
         ],
         "name": "yusei",
         "levle": 1,
         "rune": {
-            "normal": 10,
+            "normal": 8,
             "fortify": 5,
             "superFortify": 1,
             "supreme": 0
         },
-        "money": 1000
+        "money": 5700
+    },
+    "fightMes": {
+        "myMes": {
+            "life": 1000,
+            "allLife": 1000,
+            "monsterList": [
+                {
+                    "name": "小火猴",
+                    "attribute": "火",
+                    "level": "30",
+                    "experience": 163,
+                    "skillList": [
+                        "抓",
+                        "瞪眼"
+                    ],
+                    "atk": 90,
+                    "atkMagic": 101,
+                    "def": 82,
+                    "defMagic": 86,
+                    "life": 85,
+                    "speed": 87,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 0,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0
+                },
+                {
+                    "name": "布布种子",
+                    "attribute": "木",
+                    "level": "30",
+                    "experience": 38,
+                    "skillList": [
+                        "撞击",
+                        "缩头"
+                    ],
+                    "atk": 99,
+                    "atkMagic": 52,
+                    "def": 67,
+                    "defMagic": 98,
+                    "life": 72,
+                    "speed": 60,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 0,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 1,
+                    "skillListDetail": [
+                        {
+                            "name": "撞击",
+                            "type": "atk",
+                            "atk": "35",
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "撞击对方造成伤害",
+                            "attribute": "普通"
+                        },
+                        {
+                            "name": "缩头",
+                            "type": "effect",
+                            "aim": "self",
+                            "cost": 1,
+                            "effect": {
+                                "my": [
+                                    {
+                                        "type": "def",
+                                        "value": 1
+                                    }
+                                ],
+                                "bot": []
+                            },
+                            "text": "提升自身一级防御",
+                            "attribute": "普通"
+                        }
+                    ]
+                },
+                {
+                    "name": "伊优",
+                    "attribute": "水",
+                    "level": "30",
+                    "experience": 80,
+                    "skillList": [
+                        "拍打",
+                        "鸣叫"
+                    ],
+                    "atk": 69,
+                    "atkMagic": 75,
+                    "def": 85,
+                    "defMagic": 102,
+                    "life": 96,
+                    "speed": 68,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 0,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 2,
+                    "skillListDetail": [
+                        {
+                            "name": "拍打",
+                            "type": "atk",
+                            "atk": "40",
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "拍打对方造成伤害",
+                            "attribute": "普通"
+                        },
+                        {
+                            "name": "鸣叫",
+                            "type": "effect",
+                            "effect": {
+                                "my": [],
+                                "bot": [
+                                    {
+                                        "type": "atk",
+                                        "value": -1
+                                    }
+                                ]
+                            },
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "小幅降低对方物理攻击",
+                            "attribute": "普通"
+                        }
+                    ]
+                },
+                {
+                    "name": "皮皮",
+                    "attribute": "金",
+                    "level": "30",
+                    "experience": 48,
+                    "skillList": [
+                        "撞击",
+                        "鸣叫"
+                    ],
+                    "atk": 76,
+                    "atkMagic": 36,
+                    "def": 36,
+                    "defMagic": 72,
+                    "life": 88,
+                    "speed": 101,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 0,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0
+                },
+                {
+                    "name": "小豆芽",
+                    "attribute": "木",
+                    "level": "30",
+                    "experience": 0,
+                    "skillList": [
+                        "针刺"
+                    ],
+                    "atk": 76,
+                    "atkMagic": 92,
+                    "def": 70,
+                    "defMagic": 60,
+                    "life": 61,
+                    "speed": 66,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "standBy",
+                    "nowLife": 27,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 4,
+                    "skillListDetail": [
+                        {
+                            "name": "针刺",
+                            "type": "atkMagic",
+                            "atkMagic": "35",
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "飞出植物的针刺攻击对方",
+                            "attribute": "木"
+                        }
+                    ]
+                }
+            ],
+            "power": 4
+        },
+        "botMes": {
+            "life": 1000,
+            "allLife": 1000,
+            "monsterList": [
+                {
+                    "name": "张宝-地公将军",
+                    "attribute": "土",
+                    "level": 30,
+                    "skillList": [
+                        "刺拳",
+                        "咆哮",
+                        "侦察兵",
+                        "右鞭腿",
+                        "左正蹬",
+                        "一马当先",
+                        "天兵突袭"
+                    ],
+                    "atk": 109,
+                    "atkMagic": 113,
+                    "def": 112,
+                    "defMagic": 89,
+                    "life": 97,
+                    "speed": 121,
+                    "haveUseSkill": true,
+                    "isWild": true,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "atk",
+                    "nowLife": 97,
+                    "atkLv": 2,
+                    "defLv": -1,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 0
+                },
+                {
+                    "name": "张梁-人公将军",
+                    "attribute": "火",
+                    "level": 30,
+                    "skillList": [
+                        "刺拳",
+                        "咆哮",
+                        "侦察兵",
+                        "右鞭腿",
+                        "左正蹬",
+                        "一马当先",
+                        "刀枪不入"
+                    ],
+                    "atk": 111,
+                    "atkMagic": 110,
+                    "def": 118,
+                    "defMagic": 81,
+                    "life": 102,
+                    "speed": 87,
+                    "haveUseSkill": true,
+                    "isWild": true,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "atk",
+                    "nowLife": 102,
+                    "atkLv": 1,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 1
+                },
+                {
+                    "name": "张角-天公将军",
+                    "attribute": "金",
+                    "level": 32,
+                    "skillList": [
+                        "刺拳",
+                        "制药治人",
+                        "召雷之符",
+                        "问道",
+                        "召雨之符",
+                        "太平要术",
+                        "雷公助我"
+                    ],
+                    "atk": 100,
+                    "atkMagic": 155,
+                    "def": 121,
+                    "defMagic": 144,
+                    "life": 123,
+                    "speed": 146,
+                    "haveUseSkill": false,
+                    "isWild": true,
+                    "probability": 50,
+                    "lock": 1,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "standBy",
+                    "nowLife": 113,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 2
+                }
+            ],
+            "power": 1
+        },
+        "ground": "水",
+        "turn": 16,
+        "whosTurn": "my",
+        "result": ""
     }
 }

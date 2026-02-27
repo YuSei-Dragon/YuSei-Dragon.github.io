@@ -92,13 +92,15 @@ onMounted(()=>{
     }
     if(lockLevel>0){
         fightMes.myMes.monsterList.map(item=>{
-            item.level = lockLevel
-            item.atk = Math.round(item.atk*lockLevel/item.level)
-            item.def = Math.round(item.def*lockLevel/item.level)
-            item.atkMagic = Math.round(item.atkMagic*lockLevel/item.level)
-            item.defMagic = Math.round(item.defMagic*lockLevel/item.level)
-            item.speed = Math.round(item.speed*lockLevel/item.level)
-            //五项能力和等级同步下降到锁定等级同步水平
+            if(item.level>lockLevel){
+                item.level = lockLevel
+                item.atk = Math.round(item.atk*lockLevel/item.level)
+                item.def = Math.round(item.def*lockLevel/item.level)
+                item.atkMagic = Math.round(item.atkMagic*lockLevel/item.level)
+                item.defMagic = Math.round(item.defMagic*lockLevel/item.level)
+                item.speed = Math.round(item.speed*lockLevel/item.level)
+                //五项能力和等级同步下降到锁定等级同步水平
+            }
         })
     }
     if(type==="campaign"){
@@ -251,7 +253,13 @@ const getMonsterOnHandStyle = (index)=>{
     }return ""
 }//控制选中手上精灵的样式
 const callMonster = ()=>{
-    if(allMes.value.fightMes.myMes.monsterList.length>=6){
+    let num = 0
+    allMes.value.fightMes.myMes.monsterList.forEach(item=>{
+        if(item.onGround&&item.onGround===true){
+            num++
+        }
+    })
+    if(num>=6){
         return store.commit("hajimiReset/setTipList",["最多只能召唤6只精灵！"])
     }
     if(monsterChoicedIndex.value<0){
@@ -476,6 +484,7 @@ const botSkillTipBottom = ref("")
                 .fight-ground-monster-name(v-if="myMonster.name.length<=6") {{myMonster.name}}
                 el-tooltip(effect="dark" :content="myMonster.name" placement="top" v-if="myMonster.name.length>6")
                     .fight-ground-monster-name {{myMonster.name}}
+                .fight-ground-monster-level {{myMonster.level}}
                 .fight-ground-monster-status
                     el-tooltip(effect="dark" :content="myMonster.lock+'自身回合无法使用技能'" placement="left-start")
                         .fight-ground-monster-lock(v-show="myMonster.lock>0")
@@ -505,6 +514,7 @@ const botSkillTipBottom = ref("")
                 .fight-ground-monster-name(v-if="botMonster.name.length<=6") {{botMonster.name}}
                 el-tooltip(effect="dark" :content="botMonster.name" placement="top" v-if="botMonster.name.length>6")
                     .fight-ground-monster-name {{botMonster.name}}
+                .fight-ground-monster-level {{botMonster.level}}
                 .fight-ground-monster-status
                     el-tooltip(effect="dark" :content="botMonster.lock+'自身回合无法使用技能'" placement="left-start")
                         .fight-ground-monster-lock(v-show="botMonster.lock>0")
@@ -764,6 +774,16 @@ const botSkillTipBottom = ref("")
                 white-space: nowrap; /* 禁止换行 */
                 overflow: hidden; /* 隐藏溢出部分 */
                 text-overflow: ellipsis;/* 显示省略号 */
+            }
+            .fight-ground-monster-level{
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                font-size: 8px;
+                color: #fff;
+                border-radius: 4px;
+                background-color: #00000073;
+                padding: 2px 4px;
             }
             .fight-ground-monster-status{
                 position: absolute;

@@ -104,7 +104,7 @@ export default {
         )
         return allMes
     },
-    checkBossMonster(allMes){
+    checkBossMonster(allMes,store){
         //检查是否是野生boss
         console.log(allMes.wildMonster)
         if(allMes.wildMonster?.isBoss&&allMes.wildMonster.isBoss===true){
@@ -112,6 +112,8 @@ export default {
             let name = allMes.wildMonster.name
             let bossName = planetJs.getBossEssence(name)
             console.log("获得boss精元"+bossName)
+            store.commit("hajimiReset/setTipList",["获得boss精元:"+bossName])
+
             let bossMes = planetJs.getMonsterBasicMesByName(bossName)
             bossMes.allSkillList = []
             bossMes.skillList.forEach(item=>{
