@@ -21,7 +21,7 @@ const MyDialog = defineAsyncComponent(() =>
   import("./Common/Dialog.vue")
 )
 watch(() => store.state.hajimiReset.allMes, (newVal, oldVal) => {
-    console.log("allMes改变了", newVal)
+    // console.log("allMes改变了", newVal)
     allMes.value = newVal
     //把数据本地化，方便后续使用
 }, {deep: true})
@@ -32,11 +32,11 @@ onMounted(() => {
     selectOne("精灵卡")
     allMes.value = store.state.hajimiReset.allMes
     allShopList.forEach(item => {
-        if(item.typeName === "精灵卡"){
+        // if(item.typeName === "精灵卡"){
             item.list.forEach(card => {
-                card.num = allMes.value.playerMes.rune[card.realName]
+                card.num = allMes.value.playerMes.rune[card.realName]||0
             })
-        }
+        // }
     })
 })
 const selectType = ref("精灵卡")
@@ -83,6 +83,13 @@ const allShopList = [
                 price:50,
                 desc:"纯消遣"
             },
+            {
+                name:"升级卡",
+                realName:"upgrade",
+                price:100,
+                desc:"精灵直接升级一级",
+                num:0,
+            },
         ]
     }
 ]//商店信息
@@ -119,15 +126,18 @@ const sureBuy = ()=>{
         return
     }
     allMes.value.playerMes.money -= buyItem.value.allPrice
+    if(allMes.value.playerMes.rune[buyItem.value.realName] === undefined){
+        allMes.value.playerMes.rune[buyItem.value.realName] = 0
+    }//适配老版本存档字段不完整的情况
     allMes.value.playerMes.rune[buyItem.value.realName] += buyItem.value.num
     store.commit("hajimiReset/setAllMes",allMes.value)
     dialogVisible.value = false
     allShopList.forEach(item => {
-        if(item.typeName === "精灵卡"){
+        // if(item.typeName === "精灵卡"){
             item.list.forEach(card => {
                 card.num = allMes.value.playerMes.rune[card.realName]
             })
-        }
+        // }
     })
 }
 </script>

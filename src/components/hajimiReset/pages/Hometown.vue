@@ -19,13 +19,16 @@ const MonsterShow = defineAsyncComponent(() =>
 const PotentialityShow = defineAsyncComponent(() =>
   import("./Hometown/PotentialityShow.vue")
 )
+const Shop = defineAsyncComponent(() =>
+  import("./Hometown/Shop.vue")
+)
 
 const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const allMes = ref({})
 watch(() => store.state.hajimiReset.allMes, (newVal, oldVal) => {
-    console.log("allMes改变了", newVal)
+    // console.log("allMes改变了", newVal)
     allMes.value = newVal
     //把数据本地化，方便后续使用
 }, {deep: true})
@@ -55,6 +58,15 @@ const closePotentiality = () =>{
     isShowDialog.value = false
     isShowPotentiality.value = false
 }
+const isShowShop = ref(false)
+const showShop = () => {
+    isShowDialog.value = true
+    isShowShop.value = true
+}
+const closeShop = () =>{
+    isShowDialog.value = false
+    isShowShop.value = false
+}
 </script>
 
 <template lang="pug">
@@ -62,11 +74,12 @@ const closePotentiality = () =>{
     .hometown-back(@click="changePage") 返回
     .hometown-warehouse(@click="showMonster()") 出场精灵
     .hometown-potentiality(@click="showPotentiality()") 潜力/技能
+    .hometown-item(@click="showShop()") 物品
     .pending-block(v-if="isShowDialog")
         MonsterShow(v-if="isShowMonster" @closeMonsterList="closeMonsterList()"
             @confirmFight="confirmFight")
         PotentialityShow(v-if="isShowPotentiality" @closePotentiality="closePotentiality()")
-    
+        Shop(v-if="isShowShop" @closeShop="closeShop()")
 </template>
 <style scoped lang="scss">
 .hometown-block{
@@ -104,6 +117,19 @@ const closePotentiality = () =>{
         position: absolute;
         top: 50px;
         right: 132px;
+        width: 100px;
+        height: 100px;
+        line-height: 100px;
+        border: 1px solid #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        text-align: center;
+        color: #fff;
+    }
+    .hometown-item{
+        position: absolute;
+        top: 50px;
+        right: 248px;
         width: 100px;
         height: 100px;
         line-height: 100px;

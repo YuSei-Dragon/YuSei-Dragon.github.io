@@ -386,6 +386,7 @@ export default {
                     fortify:5,
                     superFortify:1,
                     supreme:0,
+                    upgrade:0,
                 },
                 money:10000,
             },
@@ -709,3 +710,4 @@ export default {
 //0212 已完成 设置每个boss的单独出招逻辑
 //0213 已完成 正确的结束被击败的处理
 //0213 已完成 正确的结束胜利的处理
+//0303 已完成 增加等级提升道具

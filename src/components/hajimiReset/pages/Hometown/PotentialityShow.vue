@@ -21,7 +21,7 @@ import skillListApi from "../Fight/skillList.js"
 const store = useStore()
 const allMes = ref({})
 watch(() => store.state.hajimiReset.allMes, (newVal, oldVal) => {
-    console.log("allMes改变了", newVal)
+    // console.log("allMes改变了", newVal)
     allMes.value = newVal
     //把数据本地化，方便后续使用
 }, {deep: true})
@@ -183,6 +183,24 @@ const evolveMonster = (monster)=>{
     store.commit("hajimiReset/setAllMes", allMes.value)
     console.log(playerMes.value,allMes.value)
 }//进化精灵
+const upgradeNum = ref(0)
+const getMaxUpgradeNum = ()=>{
+    let max = 100-playerMes.value.monsterList[selectMonsterUse.value].level
+    if(playerMes.value.rune?.upgrade&&playerMes.value.rune.upgrade<max){
+        max = playerMes.value.rune.upgrade
+    }
+    return max
+}
+const sureUpgrade = ()=>{
+    if(upgradeNum.value === 0){
+        store.commit("hajimiReset/setTipList", ["请点击设置升级数量"])
+        return
+    }
+    playerMes.value.monsterList[selectMonsterUse.value].level += upgradeNum.value
+    playerMes.value.rune.upgrade -= upgradeNum.value
+    store.commit("hajimiReset/setTipList", ["等级提升卡已使用"])
+    keepPlayMes()
+}
 </script>
 
 <template lang="pug">
@@ -196,8 +214,19 @@ const evolveMonster = (monster)=>{
                 .monster-list-item-level {{monster.level}}
     .monster-list-block(v-if="selectMonsterUse!=-1")
         .select-block 
+            .select-title(@click.stop="selectTitleClick('道具使用')" :class="selectTitle==='道具使用' ? 'select-title-active' : ''") 道具使用
             .select-title(@click.stop="selectTitleClick('潜力分配')" :class="selectTitle==='潜力分配' ? 'select-title-active' : ''") 潜力分配
             .select-title(@click.stop="selectTitleClick('技能更换')" :class="selectTitle==='技能更换' ? 'select-title-active' : ''") 技能更换
+        .monster-list(@click.stop="()=>{}" v-if="selectTitle==='道具使用'")
+            .shop-block
+                .shop-text 使用等级提升卡
+                el-popover(placement="left" width="150px" trigger="click")
+                    template(#reference)
+                        .shop-num {{upgradeNum}} 张
+                    el-input-number(v-model="upgradeNum"
+                        :min="0" :max="getMaxUpgradeNum()" size="small")
+                el-button(type="primary" class="shop-button" size="small"
+                    @click="sureUpgrade()") 确认使用
         .monster-list(@click.stop="()=>{}" v-if="selectTitle==='潜力分配'")
             .potentiality-num-block()
                 .potentiality-num {{getPotentiality(playerMes.monsterList[selectMonsterUse].level,playerMes.monsterList[selectMonsterUse].potentiality)}}
@@ -393,6 +422,28 @@ const evolveMonster = (monster)=>{
                 bottom: 10px;
                 right: 10px;
             }
+            .shop-block{
+                padding: 0px 20px;
+                height: 50px;
+                .shop-text{
+                    float: left;
+                    font-size: 12px;
+                    color: #fff;
+                    padding: 12px 0px;
+                }
+                .shop-num{
+                    float: left;
+                    font-size: 12px;
+                    color: #fff;
+                    padding: 12px 0px;
+                    padding-left: 10px;
+                }
+                .shop-button{
+                    float: right;
+                    margin: 10px 0px;
+                }
+            }
+            
         }
         .monster-skill-block{
             width: 110px;

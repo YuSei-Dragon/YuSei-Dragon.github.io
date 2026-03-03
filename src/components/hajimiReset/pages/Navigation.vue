@@ -22,7 +22,7 @@ const titleList = ref(["战斗","设置","家园","商店"])
 
 const allMes = ref({})
 watch(() => store.state.hajimiReset.allMes, (newVal, oldVal) => {
-    console.log("allMes改变了", newVal)
+    // console.log("allMes改变了", newVal)
     allMes.value = newVal
     //把数据本地化，方便后续使用
     if(allMes.value?.playerMes){
