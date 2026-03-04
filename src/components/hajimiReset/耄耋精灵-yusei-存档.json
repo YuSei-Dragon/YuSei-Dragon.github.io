@@ -452,54 +452,6 @@
                     "life": 50,
                     "speed": 40
                 }
-            },
-            {
-                "name": "小蘑菇",
-                "isBoss": true,
-                "race": {
-                    "atk": 45,
-                    "def": 50,
-                    "atkMagic": 45,
-                    "defMagic": 55,
-                    "life": 50,
-                    "speed": 30
-                },
-                "attribute": "木",
-                "probability": 0,
-                "level": 1,
-                "isWild": true,
-                "individual": {
-                    "atk": 3,
-                    "atkMagic": 21,
-                    "def": 46,
-                    "defMagic": 27,
-                    "life": 21,
-                    "speed": 21
-                },
-                "potentiality": {
-                    "atk": 0,
-                    "def": 0,
-                    "atkMagic": 0,
-                    "defMagic": 0,
-                    "life": 1,
-                    "speed": 0
-                },
-                "position": {
-                    "left": 113,
-                    "top": 8
-                },
-                "skillList": [
-                    "撞击"
-                ],
-                "allSkillList": [
-                    {
-                        "name": "撞击",
-                        "using": true
-                    }
-                ],
-                "cantMove": false,
-                "showTip": "",
-                "fightMes": {}
             }
         ],
         "monsterFightList": [

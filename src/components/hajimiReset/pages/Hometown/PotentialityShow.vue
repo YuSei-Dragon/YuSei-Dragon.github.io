@@ -39,6 +39,11 @@ const initMes = ()=>{
     playerMes.value.monsterList.map(monster=>{
         monster.canLearnSkillList = []
         //可学习技能
+        if(monster.allSkillList&&Array.isArray(monster.allSkillList)){
+            //防止运行报错，避免空指针
+        }else{
+            monster.allSkillList = []
+        }
         skillListApi.getSkillList(monster.name,monster.level).forEach(item=>{
             if(monster.allSkillList.find(skill=>skill.name === item)){
                 //已经有这个技能,不再增加

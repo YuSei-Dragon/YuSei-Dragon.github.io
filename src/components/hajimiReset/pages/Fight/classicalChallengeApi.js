@@ -194,6 +194,7 @@ export default {
             speed:data.race.speed + data.individual.speed + data.potentiality.speed,
             haveUseSkill:false,
             isWild:data.isWild||false,
+            isBoss:data.isBoss||false,
             probability:data.probability||0,
             lock:0,
             hurtValue:0,

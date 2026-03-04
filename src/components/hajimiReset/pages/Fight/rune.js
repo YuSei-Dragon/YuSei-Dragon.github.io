@@ -1,7 +1,9 @@
 import planetJs from "../Planet/planet.js"
+import skillListApi from "./skillList.js"
 export default {
     useRune(type,allMes,targetIndex,store){
         let monsterMes = allMes.fightMes.botMes.monsterList[targetIndex]
+        console.log(monsterMes)
         let percent = 0
         if(allMes.playerMes.rune[type]<=0){
             store.commit("hajimiReset/setTipList",["此符文数量不足！"])
@@ -116,10 +118,19 @@ export default {
 
             let bossMes = planetJs.getMonsterBasicMesByName(bossName)
             bossMes.allSkillList = []
-            bossMes.skillList.forEach(item=>{
-                bossMes.allSkillList.push({name:item,using:true})
-            })
-            allMes.playerMes.monsterList.push(bossMes)
+            allMes.playerMes.monsterList.push(
+                {
+                    name:bossMes.name,
+                    race:bossMes.race,
+                    attribute:bossMes.attribute,
+                    potentiality:bossMes.potentiality,
+                    individual:bossMes.individual,
+                    level:bossMes.level,
+                    experience:0,
+                    skillList:bossMes.skillList,
+                    allSkillList:bossMes.allSkillList,
+                }
+            )
             console.log(bossMes)
         }
         return allMes
