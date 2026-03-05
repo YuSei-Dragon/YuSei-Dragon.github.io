@@ -57,11 +57,15 @@ const initMes = ()=>{
         })//把符合等级的技能添加到精灵的技能列表中
         skillListApi.getAllSkillList(monster.name).forEach(item1=>{
             if(item1.level>monster.level){
-                monster.canLearnSkillList.push(item1)
+                monster.canLearnSkillList.push({
+                    ...item1,
+                    text: skillListApi.getSkillDetailByName(item1.name).text
+                })
             }//加入未来可学习的技能
             monster.allSkillList.map(skill=>{
                 if(skill.name === item1.name){
                     skill.level = item1.level
+                    skill.text = skillListApi.getSkillDetailByName(item1.name).text
                 }
             })//在展示这里独立处理一次数据
         })//把对应的等级标记上去
@@ -110,6 +114,17 @@ const getLineStyle = (item,monster)=>{
     style += "width: " + width + "px;"
     return style
 }//动态修正能力值的直观表现
+const getRaceLineStyle = (item,monster)=>{
+    let style = ""
+    const monsterMes = classicalApi.getMonsterFightMes(monster)
+    const width = monsterMes[item] / 200 * 160    //限制最大值显示4/5的长度，动态调整避免极端情况
+    style += "width: " + width + "px;"
+    return style
+}
+const getRaceLineNum = (item,monster)=>{
+    const monsterMes = classicalApi.getMonsterFightMes(monster)
+    return monsterMes[item]
+}//获取种族值
 const getInputMax = (monster,item)=>{
     let num = 0
     for(let i in monster.potentiality){
@@ -187,6 +202,7 @@ const evolveMonster = (monster)=>{
     allMes.value.playerMes = playerMes.value
     store.commit("hajimiReset/setAllMes", allMes.value)
     console.log(playerMes.value,allMes.value)
+    initMes()
 }//进化精灵
 const upgradeNum = ref(0)
 const getMaxUpgradeNum = ()=>{
@@ -205,6 +221,7 @@ const sureUpgrade = ()=>{
     playerMes.value.rune.upgrade -= upgradeNum.value
     store.commit("hajimiReset/setTipList", ["等级提升卡已使用"])
     keepPlayMes()
+    initMes()
 }
 </script>
 
@@ -244,6 +261,9 @@ const sureUpgrade = ()=>{
                 .potentiality-mes-text {{getPotentialityName(item)}}
                 .potentiality-mes-line-block
                     .potentiality-mes-line(:style="getLineStyle(item,playerMes.monsterList[selectMonsterUse])")
+                .potentiality-mes-race-line-block
+                    .potentiality-mes-race-line(:style="getRaceLineStyle(item,playerMes.monsterList[selectMonsterUse])")
+                .potentiality-mes-race-line-num 族: {{getRaceLineNum(item,playerMes.monsterList[selectMonsterUse])}}
                 el-popover(placement="left" width="150px" trigger="click")
                     template(#reference)
                         .potentiality-mes-num {{playerMes.monsterList[selectMonsterUse].potentiality[item]}}
@@ -258,17 +278,26 @@ const sureUpgrade = ()=>{
             .monster-skill-block
                 el-input(class="monster-skill-input" v-model="inputSkill" size="small" placeholder="请输入技能名称")
                 .monster-skill-all
-                    .monster-skill-all-for(v-for="skill in playerMes.monsterList[selectMonsterUse].allSkillList"
+                    .monster-skill-all-for(v-show="skill.name.includes(inputSkill)"
+                        v-for="skill in playerMes.monsterList[selectMonsterUse].allSkillList"
                         :key="skill.name" :class="skill.using ? 'monster-skill-all-for-active' : ''"
-                        @click="clickSkillAll(skill.name)" v-show="skill.name.includes(inputSkill)") 
-                        .monster-skill-all-for-name {{skill.name}}
-                        .monster-skill-all-for-level {{skill.level||'?'}}
+                        @click="clickSkillAll(skill.name)" ) 
+                        el-popover(placement="left" width="150px" trigger="hover")
+                            template(#reference)
+                                div(style="width:100%;height:100%;")
+                                    .monster-skill-all-for-name {{skill.name}}
+                                    .monster-skill-all-for-level {{skill.level||'?'}}
+                            .monster-skill-all-for-text(style="font-size: 10px;") {{skill.text}}
                     .monster-skill-all-for(style="background-color:#ff9d9d;" v-for="skill in playerMes.monsterList[selectMonsterUse].canLearnSkillList"
                         :key="skill.name" v-show="skill.name.includes(inputSkill)"
                         @click="store.commit('hajimiReset/setTipList', ['此技能需要'+skill.level+'级才能解锁!'])") 
-                        .monster-skill-all-for-name(style="padding-left: 12px") {{skill.name}}
-                        .monster-skill-all-for-level {{skill.level||'?'}}
-                        .monster-skill-all-for-img
+                        el-popover(placement="left" width="150px" trigger="hover")
+                            template(#reference)
+                                div(style="width:100%;height:100%;")
+                                    .monster-skill-all-for-name(style="padding-left: 12px") {{skill.name}}
+                                    .monster-skill-all-for-level {{skill.level||'?'}}
+                                    .monster-skill-all-for-img
+                            .monster-skill-all-for-text(style="font-size: 10px;") {{skill.text}}
             .monster-skill-block
                 .monster-skill-use
                     .monster-skill-use-for(v-for="skill in playerMes.monsterList[selectMonsterUse].skillList" :key="skill"
@@ -373,6 +402,7 @@ const sureUpgrade = ()=>{
             .potentiality-mes-block{
                 width: 100%;
                 height: 40px;
+                position: relative;
                 .potentiality-mes-text{
                     float: left;
                     font-size: 12px;
@@ -395,6 +425,29 @@ const sureUpgrade = ()=>{
                         border-bottom-left-radius: 4px;
                         background-color: #33a6ff;
                     }
+                }
+                .potentiality-mes-race-line-block{
+                    position: absolute;
+                    top: 32px;
+                    left: 56px;
+                    width: 160px;
+                    height: 4px;
+                    background-color: #999;
+                    border-radius: 4px;
+                    overflow: hidden;
+                    .potentiality-mes-race-line{
+                        height: 4px;
+                        border-top-left-radius: 4px;
+                        border-bottom-left-radius: 4px;
+                        background-color: #eee;
+                    }
+                }
+                .potentiality-mes-race-line-num{
+                    position: absolute;
+                    top: 28px;
+                    left: 16px;
+                    font-size: 10px;
+                    color:#aaa;
                 }
                 .potentiality-mes-num{
                     float: left;

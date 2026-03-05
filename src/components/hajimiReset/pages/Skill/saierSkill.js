@@ -312,12 +312,23 @@ let skillList = [
     },
     {
         name: "阳光烈焰",
-        type: "atk",
-        atk: "120",
+        type: "atkMagic",
+        atkMagic: "120",
         aim:"single",
         cost: 2,
         text:"无副效果的木属性强力特殊攻击",
         attribute:"木",
+    },
+    {
+        name:"野蛮生长",
+        type:"effect",
+        aim:"self",
+        cost: 1,
+        effect:{
+            my:[{"type":"def","value":-2},{"type":"heal","value":"100","valueType":"percent",turn:1}],
+            bot:[]
+        },
+        text:"将自身生命值回满，但会降低自身两级物理防御",
     },
     {
         name: "荆棘之躯",
@@ -1632,7 +1643,8 @@ let monsterSkillListByLevel = [
             {level:32,name:"花瓣舞"},
             {level:45,name:"光合作用"},
             {level:53,name:"阳光烈焰"},
-            {level:60,name:"荆棘之躯"},
+            {level:59,name:"野蛮生长"},
+            {level:65,name:"荆棘之躯"},
         ]
     },//巨型仙人掌
     {

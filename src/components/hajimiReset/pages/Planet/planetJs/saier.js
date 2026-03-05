@@ -7,12 +7,12 @@ export default {
             result = {
                 name:"皮皮",
                 "race": {
-                    "atk": 30,
+                    "atk": 55,
                     "def": 30,
                     "atkMagic": 30,
                     "defMagic": 30,
-                    "life": 60,
-                    "speed": 80
+                    "life": 40,
+                    "speed": 60
                 },//种族值
                 "attribute": "金",
                 probability:50,
@@ -25,12 +25,12 @@ export default {
             result = {
                 name:"比波",
                 "race": {
-                    "atk": 80,
-                    "def": 80,
-                    "atkMagic": 60,
-                    "defMagic": 60,
-                    "life": 80,
-                    "speed": 120
+                    "atk": 75,
+                    "def": 50,
+                    "atkMagic": 40,
+                    "defMagic": 40,
+                    "life": 55,
+                    "speed": 80
                 },//种族值
                 "attribute": "金",
                 probability:50,
@@ -44,11 +44,11 @@ export default {
                 name:"波克尔",
                 "race": {
                     "atk": 120,
-                    "def": 100,
-                    "atkMagic": 80,
-                    "defMagic": 80,
-                    "life": 100,
-                    "speed": 150
+                    "def": 70,
+                    "atkMagic": 50,
+                    "defMagic": 55,
+                    "life": 85,
+                    "speed": 100
                 },//种族值
                 "attribute": "金",
                 probability:50,
@@ -60,12 +60,12 @@ export default {
             result = {
                 name:"仙人球",
                 "race": {
-                    "atk": 40,
-                    "def": 40,
-                    "atkMagic": 40,
-                    "defMagic": 30,
-                    "life": 70,
-                    "speed": 50
+                    "atk": 49,
+                    "def": 49,
+                    "atkMagic": 65,
+                    "defMagic": 65,
+                    "life": 45,
+                    "speed": 45
                 },//种族值
                 "attribute": "木",
                 probability:50,
@@ -78,11 +78,11 @@ export default {
             result = {
                 name:"仙人掌",
                 "race": {
-                    "atk": 60,
-                    "def": 60,
+                    "atk": 62,
+                    "def": 63,
                     "atkMagic": 80,
                     "defMagic": 80,
-                    "life": 80,
+                    "life": 60,
                     "speed": 60
                 },//种族值
                 "attribute": "木",
@@ -96,11 +96,11 @@ export default {
             result = {
                 name:"巨型仙人掌",
                 "race": {
-                    "atk": 80,
-                    "def": 80,
+                    "atk": 82,
+                    "def": 83,
                     "atkMagic": 100,
                     "defMagic": 100,
-                    "life": 100,
+                    "life": 80,
                     "speed": 80
                 },//种族值
                 "attribute": "木",
