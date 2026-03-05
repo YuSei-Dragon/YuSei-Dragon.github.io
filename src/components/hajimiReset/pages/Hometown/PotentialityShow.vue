@@ -117,13 +117,13 @@ const getLineStyle = (item,monster)=>{
 const getRaceLineStyle = (item,monster)=>{
     let style = ""
     const monsterMes = classicalApi.getMonsterFightMes(monster)
-    const width = monsterMes[item] / 200 * 160    //限制最大值显示4/5的长度，动态调整避免极端情况
+    const width = monsterMes.race[item] / 200 * 160    //限制最大值显示4/5的长度，动态调整避免极端情况
     style += "width: " + width + "px;"
     return style
 }
 const getRaceLineNum = (item,monster)=>{
     const monsterMes = classicalApi.getMonsterFightMes(monster)
-    return monsterMes[item]
+    return monsterMes.race[item]
 }//获取种族值
 const getInputMax = (monster,item)=>{
     let num = 0

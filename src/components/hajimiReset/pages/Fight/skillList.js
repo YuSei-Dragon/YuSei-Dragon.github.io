@@ -480,7 +480,7 @@ export default {
                                 if(effectItem.type==="absorb"){
                                     //处理吸收类技能
                                     if(effectItem.valueType==="percent"){
-                                        let lifeValue = item.life  * Number(effectItem.value) / 100
+                                        let lifeValue = Math.floor(item.life  * Number(effectItem.value) / 100)
                                         item.hurtValue = lifeValue
                                         item.hurtTurn = effectItem.turn
                                         allMes.fightMes[selfEffect].monsterList[user.groundIndex].healValue = lifeValue
@@ -490,7 +490,7 @@ export default {
                                 if(effectItem.type==="hurt"){
                                     //处理持续伤害类技能
                                     if(effectItem.valueType==="percent"){
-                                        let lifeValue = item.life  * Number(effectItem.value) / 100
+                                        let lifeValue = Math.floor(item.life  * Number(effectItem.value) / 100)
                                         item.hurtValue = lifeValue
                                         item.hurtTurn = effectItem.turn
                                     }
@@ -753,6 +753,8 @@ export default {
         if(atk?.magnification&&atk.magnification>0){
             damage *= 2
         }//翻倍伤害结算
+        damage = damage/3
+        //平衡最终伤害和生命值之间的数值
         console.log(atk.name,atk,def.name,def,skill.name,Number(damage.toFixed(0)))
         return Number(damage.toFixed(0))
     },//伤害计算

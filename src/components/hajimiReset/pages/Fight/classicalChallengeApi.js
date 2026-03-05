@@ -186,12 +186,19 @@ export default {
             level:data.level,
             experience:data.experience,
             skillList:data.skillList,
-            atk:data.race.atk + data.individual.atk + data.potentiality.atk,
-            atkMagic:data.race.atkMagic + data.individual.atkMagic + data.potentiality.atkMagic,
-            def:data.race.def + data.individual.def + data.potentiality.def,
-            defMagic:data.race.defMagic + data.individual.defMagic + data.potentiality.defMagic,
-            life:data.race.life + data.individual.life + data.potentiality.life,
-            speed:data.race.speed + data.individual.speed + data.potentiality.speed,
+            atk:Math.floor((data.race.atk + data.individual.atk)*data.level/100*0.9) +
+                Math.floor((data.race.atk + data.individual.atk)*0.1) + data.potentiality.atk,
+            atkMagic:Math.floor((data.race.atkMagic + data.individual.atkMagic)*data.level/100*0.9) +
+                Math.floor((data.race.atkMagic + data.individual.atkMagic)*0.1) + data.potentiality.atkMagic,
+            def:Math.floor((data.race.def + data.individual.def)*data.level/100*0.9) +
+                Math.floor((data.race.def + data.individual.def)*0.1) + data.potentiality.def,
+            defMagic:Math.floor((data.race.defMagic + data.individual.defMagic)*data.level/100*0.9) +
+                Math.floor((data.race.defMagic + data.individual.defMagic)*0.1) + data.potentiality.defMagic,
+            life:Math.floor((data.race.life + data.individual.life)*data.level/100*0.9) +
+                Math.floor((data.race.life + data.individual.life)*0.1) + data.potentiality.life,
+            speed:Math.floor((data.race.speed + data.individual.speed)*data.level/100*0.9) +
+                Math.floor((data.race.speed + data.individual.speed)*0.1) + data.potentiality.speed,
+            race:data.race,
             haveUseSkill:false,
             isWild:data.isWild||false,
             isBoss:data.isBoss||false,

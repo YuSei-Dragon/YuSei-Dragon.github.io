@@ -48,24 +48,24 @@
                 "level": 30,
                 "isWild": true,
                 "individual": {
-                    "atk": 17,
-                    "atkMagic": 1,
-                    "def": 32,
-                    "defMagic": 3,
-                    "life": 17,
-                    "speed": 41
+                    "atk": 21,
+                    "atkMagic": 47,
+                    "def": 20,
+                    "defMagic": 46,
+                    "life": 23,
+                    "speed": 27
                 },
                 "potentiality": {
-                    "atk": 2,
-                    "def": 0,
-                    "atkMagic": 22,
-                    "defMagic": 6,
+                    "atk": 7,
+                    "def": 1,
+                    "atkMagic": 0,
+                    "defMagic": 20,
                     "life": 0,
-                    "speed": 0
+                    "speed": 2
                 },
                 "position": {
-                    "left": 269,
-                    "top": 180
+                    "left": 288,
+                    "top": 52
                 },
                 "skillList": [
                     "刺拳",
@@ -105,24 +105,24 @@
                 "level": 30,
                 "isWild": true,
                 "individual": {
-                    "atk": 0,
-                    "atkMagic": 41,
-                    "def": 20,
-                    "defMagic": 1,
+                    "atk": 18,
+                    "atkMagic": 7,
+                    "def": 4,
+                    "defMagic": 2,
                     "life": 0,
-                    "speed": 7
+                    "speed": 12
                 },
                 "potentiality": {
-                    "atk": 1,
-                    "def": 18,
-                    "atkMagic": 9,
-                    "defMagic": 0,
-                    "life": 2,
-                    "speed": 0
+                    "atk": 0,
+                    "def": 0,
+                    "atkMagic": 0,
+                    "defMagic": 26,
+                    "life": 3,
+                    "speed": 1
                 },
                 "position": {
-                    "left": 293,
-                    "top": 39
+                    "left": 254,
+                    "top": 183
                 },
                 "skillList": [
                     "刺拳",
@@ -162,24 +162,24 @@
                 "level": 32,
                 "isWild": true,
                 "individual": {
-                    "atk": 33,
-                    "atkMagic": 25,
-                    "def": 40,
-                    "defMagic": 44,
-                    "life": 43,
-                    "speed": 42
+                    "atk": 44,
+                    "atkMagic": 45,
+                    "def": 3,
+                    "defMagic": 10,
+                    "life": 30,
+                    "speed": 25
                 },
                 "potentiality": {
-                    "atk": 7,
-                    "def": 1,
+                    "atk": 1,
+                    "def": 0,
                     "atkMagic": 0,
-                    "defMagic": 0,
+                    "defMagic": 2,
                     "life": 0,
-                    "speed": 24
+                    "speed": 29
                 },
                 "position": {
-                    "left": 169,
-                    "top": 227
+                    "left": 23,
+                    "top": 243
                 },
                 "skillList": [
                     "刺拳",
@@ -245,22 +245,26 @@
                     {
                         "name": "抓",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "使用爪子攻击对方"
                     },
                     {
                         "name": "瞪眼",
                         "using": true,
-                        "level": 3
+                        "level": 3,
+                        "text": "小幅降低对方物理防御"
                     },
                     {
                         "name": "火花",
                         "using": false,
-                        "level": 7
+                        "level": 7,
+                        "text": "成功命中后，10%几率8回合内每回合对对方造成1/10最大生命值伤害"
                     },
                     {
                         "name": "挑拨",
                         "using": false,
-                        "level": 9
+                        "level": 9,
+                        "text": "降低对方一级速度"
                     }
                 ],
                 "canLearnSkillList": []
@@ -302,27 +306,32 @@
                     {
                         "name": "撞击",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "撞击对方造成伤害"
                     },
                     {
                         "name": "缩头",
                         "using": true,
-                        "level": 4
+                        "level": 4,
+                        "text": "提升自身一级防御"
                     },
                     {
                         "name": "吸取",
                         "using": false,
-                        "level": 9
+                        "level": 9,
+                        "text": "造成伤害的一半回复自己体力"
                     }
                 ],
                 "canLearnSkillList": [
                     {
                         "level": 13,
-                        "name": "疾风刃"
+                        "name": "疾风刃",
+                        "text": "用叶子急速的攻击对方，带起一阵疾风"
                     },
                     {
                         "level": 17,
-                        "name": "诅咒"
+                        "name": "诅咒",
+                        "text": "提升自身一级物攻，一级防御，降低一级速度"
                     }
                 ]
             },
@@ -363,27 +372,32 @@
                     {
                         "name": "拍打",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "拍打对方造成伤害"
                     },
                     {
                         "name": "鸣叫",
                         "using": true,
-                        "level": 4
+                        "level": 4,
+                        "text": "小幅降低对方物理攻击"
                     },
                     {
                         "name": "泡沫",
                         "using": false,
-                        "level": 8
+                        "level": 8,
+                        "text": "技能命中后，15%降低对方一级速度"
                     }
                 ],
                 "canLearnSkillList": [
                     {
                         "level": 11,
-                        "name": "玩水"
+                        "name": "玩水",
+                        "text": "提升自身一级速度"
                     },
                     {
                         "level": 15,
-                        "name": "飞击"
+                        "name": "飞击",
+                        "text": "飞击对方造成伤害"
                     }
                 ]
             },
@@ -423,29 +437,34 @@
                 "canLearnSkillList": [
                     {
                         "level": 13,
-                        "name": "诱惑"
+                        "name": "诱惑",
+                        "text": "小幅降低对方速度"
                     }
                 ],
                 "allSkillList": [
                     {
                         "name": "撞击",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "撞击对方造成伤害"
                     },
                     {
                         "name": "鸣叫",
                         "using": true,
-                        "level": 3
+                        "level": 3,
+                        "text": "小幅降低对方物理攻击"
                     },
                     {
                         "name": "电光火石",
                         "using": false,
-                        "level": 5
+                        "level": 5,
+                        "text": "50%概率封印对方精灵一回合"
                     },
                     {
                         "name": "飞翼拍击",
                         "using": false,
-                        "level": 9
+                        "level": 9,
+                        "text": "使用翅膀攻击对方"
                     }
                 ]
             },
@@ -484,30 +503,36 @@
                 "canLearnSkillList": [
                     {
                         "level": 5,
-                        "name": "生长"
+                        "name": "生长",
+                        "text": "小幅提高特攻"
                     },
                     {
                         "level": 9,
-                        "name": "卷紧"
+                        "name": "卷紧",
+                        "text": "成功命中后，8回合内每回合对对方造成1/10最大生命值伤害"
                     },
                     {
                         "level": 13,
-                        "name": "催眠粉"
+                        "name": "催眠粉",
+                        "text": "50%概率封印对方三回合"
                     },
                     {
                         "level": 16,
-                        "name": "毒粉"
+                        "name": "毒粉",
+                        "text": "8回合内每回合对对方造成1/10最大生命值伤害"
                     },
                     {
                         "level": 19,
-                        "name": "麻痹粉"
+                        "name": "麻痹粉",
+                        "text": "70%概率封印对方两回合"
                     }
                 ],
                 "allSkillList": [
                     {
                         "name": "针刺",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "飞出植物的针刺攻击对方"
                     }
                 ]
             },
@@ -547,34 +572,40 @@
                     {
                         "name": "撞击",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "撞击对方造成伤害"
                     }
                 ],
                 "canLearnSkillList": [
                     {
                         "level": 4,
-                        "name": "瞪眼"
+                        "name": "瞪眼",
+                        "text": "小幅降低对方物理防御"
                     },
                     {
                         "level": 7,
-                        "name": "针刺"
+                        "name": "针刺",
+                        "text": "飞出植物的针刺攻击对方"
                     },
                     {
                         "level": 10,
-                        "name": "毒粉"
+                        "name": "毒粉",
+                        "text": "8回合内每回合对对方造成1/10最大生命值伤害"
                     },
                     {
                         "level": 13,
-                        "name": "弹跳踢"
+                        "name": "弹跳踢",
+                        "text": "一回合进行2~3次攻击"
                     },
                     {
                         "level": 17,
-                        "name": "毒泡"
+                        "name": "毒泡",
+                        "text": "对对方喷出有毒的泡泡"
                     }
                 ]
             },
             {
-                "name": "仙人球",
+                "name": "仙人掌",
                 "individual": {
                     "atk": 20,
                     "atkMagic": 28,
@@ -584,11 +615,11 @@
                     "speed": 36
                 },
                 "potentiality": {
-                    "atk": 3,
+                    "atk": 0,
                     "def": 0,
-                    "atkMagic": 0,
+                    "atkMagic": 16,
                     "defMagic": 0,
-                    "life": 1,
+                    "life": 0,
                     "speed": 0
                 },
                 "attribute": "木",
@@ -596,50 +627,87 @@
                 "experience": 0,
                 "skillList": [
                     "撞击",
-                    "鸣叫"
+                    "寄生种子",
+                    "突进",
+                    "催眠粉"
                 ],
                 "race": {
-                    "atk": 40,
-                    "def": 40,
-                    "atkMagic": 40,
-                    "defMagic": 30,
-                    "life": 70,
-                    "speed": 50
+                    "atk": 62,
+                    "def": 63,
+                    "atkMagic": 80,
+                    "defMagic": 80,
+                    "life": 60,
+                    "speed": 60
                 },
                 "canLearnSkillList": [
                     {
-                        "level": 7,
-                        "name": "寄生种子"
+                        "level": 20,
+                        "name": "疾风刃",
+                        "text": "用叶子急速的攻击对方，带起一阵疾风"
                     },
                     {
-                        "level": 9,
-                        "name": "针刺"
+                        "level": 23,
+                        "name": "香甜气息",
+                        "text": "3个自身回合内攻击和特殊攻击必中"
                     },
                     {
-                        "level": 13,
-                        "name": "催眠粉"
+                        "level": 28,
+                        "name": "生长",
+                        "text": "小幅提高特攻"
                     },
                     {
-                        "level": 14,
-                        "name": "毒粉"
-                    },
-                    {
-                        "level": 15,
-                        "name": "突进"
+                        "level": 31,
+                        "name": "舍身撞击",
+                        "text": "舍身技，会受到1/4的伤害反弹"
                     }
                 ],
                 "allSkillList": [
                     {
                         "name": "撞击",
                         "using": true,
-                        "level": 1
+                        "level": 1,
+                        "text": "撞击对方造成伤害"
                     },
                     {
                         "name": "鸣叫",
+                        "using": false,
+                        "level": 3,
+                        "text": "小幅降低对方物理攻击"
+                    },
+                    {
+                        "name": "寄生种子",
                         "using": true,
-                        "level": 3
+                        "level": 7,
+                        "text": "5回合内每回合吸取对方1/8最大生命值"
+                    },
+                    {
+                        "name": "针刺",
+                        "using": false,
+                        "level": 9,
+                        "text": "飞出植物的针刺攻击对方"
+                    },
+                    {
+                        "name": "催眠粉",
+                        "using": true,
+                        "level": 13,
+                        "text": "50%概率封印对方三回合"
+                    },
+                    {
+                        "name": "毒粉",
+                        "using": false,
+                        "level": 14,
+                        "text": "8回合内每回合对对方造成1/10最大生命值伤害"
+                    },
+                    {
+                        "name": "突进",
+                        "using": true,
+                        "level": 15,
+                        "text": "舍身技，会受到1/4的伤害反弹"
                     }
-                ]
+                ],
+                "probability": 50,
+                "evolveLv": 32,
+                "evolveTo": "巨型仙人掌"
             }
         ],
         "monsterFightList": [
@@ -647,7 +715,8 @@
             1,
             2,
             3,
-            4
+            4,
+            6
         ],
         "name": "yusei",
         "levle": 1,
@@ -658,7 +727,459 @@
             "supreme": 0,
             "upgrade": 50
         },
-        "money": 0
+        "money": 2550
     },
-    "fightMes": null
+    "fightMes": {
+        "myMes": {
+            "life": 1000,
+            "allLife": 1000,
+            "monsterList": [
+                {
+                    "name": "小火猴",
+                    "attribute": "火",
+                    "level": 13,
+                    "experience": 35,
+                    "skillList": [
+                        "抓",
+                        "瞪眼"
+                    ],
+                    "atk": 90,
+                    "atkMagic": 107,
+                    "def": 82,
+                    "defMagic": 86,
+                    "life": 85,
+                    "speed": 87,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 0,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 0,
+                    "skillListDetail": [
+                        {
+                            "name": "抓",
+                            "type": "atk",
+                            "atk": "40",
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "使用爪子攻击对方",
+                            "attribute": "普通"
+                        },
+                        {
+                            "name": "瞪眼",
+                            "type": "effect",
+                            "effect": {
+                                "my": [],
+                                "bot": [
+                                    {
+                                        "type": "def",
+                                        "value": -1
+                                    }
+                                ]
+                            },
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "小幅降低对方物理防御",
+                            "attribute": "普通"
+                        }
+                    ]
+                },
+                {
+                    "name": "布布种子",
+                    "attribute": "木",
+                    "level": 10,
+                    "experience": 7,
+                    "skillList": [
+                        "撞击",
+                        "缩头"
+                    ],
+                    "atk": 104,
+                    "atkMagic": 52,
+                    "def": 67,
+                    "defMagic": 98,
+                    "life": 72,
+                    "speed": 60,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": false,
+                    "status": "standBy"
+                },
+                {
+                    "name": "伊优",
+                    "attribute": "水",
+                    "level": 8,
+                    "experience": 80,
+                    "skillList": [
+                        "拍打",
+                        "鸣叫"
+                    ],
+                    "atk": 69,
+                    "atkMagic": 75,
+                    "def": 85,
+                    "defMagic": 102,
+                    "life": 99,
+                    "speed": 68,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": false,
+                    "status": "standBy"
+                },
+                {
+                    "name": "皮皮",
+                    "attribute": "金",
+                    "level": 12,
+                    "experience": 93,
+                    "skillList": [
+                        "撞击",
+                        "鸣叫"
+                    ],
+                    "atk": 83,
+                    "atkMagic": 36,
+                    "def": 36,
+                    "defMagic": 72,
+                    "life": 88,
+                    "speed": 101,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": false,
+                    "status": "standBy"
+                },
+                {
+                    "name": "小豆芽",
+                    "attribute": "木",
+                    "level": 4,
+                    "experience": 0,
+                    "skillList": [
+                        "针刺"
+                    ],
+                    "atk": 76,
+                    "atkMagic": 92,
+                    "def": 70,
+                    "defMagic": 60,
+                    "life": 61,
+                    "speed": 66,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 0,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": false,
+                    "status": "standBy"
+                },
+                {
+                    "name": "仙人掌",
+                    "attribute": "木",
+                    "level": 16,
+                    "experience": 0,
+                    "skillList": [
+                        "撞击",
+                        "寄生种子",
+                        "突进",
+                        "催眠粉"
+                    ],
+                    "atk": 82,
+                    "atkMagic": 124,
+                    "def": 106,
+                    "defMagic": 115,
+                    "life": 91,
+                    "speed": 96,
+                    "haveUseSkill": false,
+                    "isWild": false,
+                    "isBoss": false,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 16.7375,
+                    "healTurn": 1,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": false,
+                    "isDead": true,
+                    "status": "standBy",
+                    "nowLife": 16.7375,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 5,
+                    "skillListDetail": [
+                        {
+                            "name": "撞击",
+                            "type": "atk",
+                            "atk": "35",
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "撞击对方造成伤害",
+                            "attribute": "普通"
+                        },
+                        {
+                            "name": "寄生种子",
+                            "type": "effect",
+                            "aim": "single",
+                            "cost": 1,
+                            "effect": {
+                                "my": [],
+                                "bot": [
+                                    {
+                                        "type": "absorb",
+                                        "value": "16.25",
+                                        "valueType": "percent",
+                                        "turn": 5
+                                    }
+                                ]
+                            },
+                            "text": "5回合内每回合吸取对方1/8最大生命值",
+                            "attribute": "木"
+                        },
+                        {
+                            "name": "突进",
+                            "type": "atk",
+                            "atk": "90",
+                            "atkAdd": {
+                                "rebound": 25
+                            },
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "舍身技，会受到1/4的伤害反弹",
+                            "attribute": "普通"
+                        },
+                        {
+                            "name": "催眠粉",
+                            "type": "effect",
+                            "effect": {
+                                "my": [],
+                                "bot": [
+                                    {
+                                        "type": "lock",
+                                        "value": 3,
+                                        "percent": "50"
+                                    }
+                                ]
+                            },
+                            "aim": "single",
+                            "cost": 1,
+                            "text": "50%概率封印对方三回合",
+                            "attribute": "普通"
+                        }
+                    ]
+                }
+            ],
+            "power": 2
+        },
+        "botMes": {
+            "life": 1000,
+            "allLife": 1000,
+            "monsterList": [
+                {
+                    "name": "张宝-地公将军",
+                    "attribute": "土",
+                    "level": 30,
+                    "skillList": [
+                        "刺拳",
+                        "咆哮",
+                        "侦察兵",
+                        "右鞭腿",
+                        "左正蹬",
+                        "一马当先",
+                        "天兵突袭"
+                    ],
+                    "atk": 118,
+                    "atkMagic": 137,
+                    "def": 101,
+                    "defMagic": 146,
+                    "life": 103,
+                    "speed": 109,
+                    "haveUseSkill": true,
+                    "isWild": true,
+                    "isBoss": true,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 16.7375,
+                    "hurtTurn": 1,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "atk",
+                    "nowLife": 36.05000000000001,
+                    "atkLv": 2,
+                    "defLv": -1,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 0
+                },
+                {
+                    "name": "张梁-人公将军",
+                    "attribute": "火",
+                    "level": 30,
+                    "skillList": [
+                        "刺拳",
+                        "咆哮",
+                        "侦察兵",
+                        "右鞭腿",
+                        "左正蹬",
+                        "一马当先",
+                        "刀枪不入"
+                    ],
+                    "atk": 128,
+                    "atkMagic": 67,
+                    "def": 84,
+                    "defMagic": 108,
+                    "life": 103,
+                    "speed": 93,
+                    "haveUseSkill": true,
+                    "isWild": true,
+                    "isBoss": true,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "atk",
+                    "nowLife": 103,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 1
+                },
+                {
+                    "name": "张角-天公将军",
+                    "attribute": "金",
+                    "level": 32,
+                    "skillList": [
+                        "刺拳",
+                        "制药治人",
+                        "召雷之符",
+                        "问道",
+                        "召雨之符",
+                        "太平要术",
+                        "雷公助我"
+                    ],
+                    "atk": 105,
+                    "atkMagic": 175,
+                    "def": 83,
+                    "defMagic": 112,
+                    "life": 110,
+                    "speed": 134,
+                    "haveUseSkill": false,
+                    "isWild": true,
+                    "isBoss": true,
+                    "probability": 50,
+                    "lock": 0,
+                    "hurtValue": 0,
+                    "hurtTurn": 0,
+                    "healValue": 0,
+                    "healTurn": 0,
+                    "stable": 0,
+                    "clean": 0,
+                    "protect": 0,
+                    "magnification": 0,
+                    "delay": [],
+                    "onGround": true,
+                    "isDead": false,
+                    "status": "standBy",
+                    "nowLife": 88,
+                    "atkLv": 0,
+                    "defLv": 0,
+                    "atkMagicLv": 0,
+                    "defMagicLv": 0,
+                    "speedLv": 0,
+                    "groundIndex": 2
+                }
+            ],
+            "power": 1
+        },
+        "ground": "水",
+        "turn": 10,
+        "whosTurn": "my",
+        "result": ""
+    }
 }
